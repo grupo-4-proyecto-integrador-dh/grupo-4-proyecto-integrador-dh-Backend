@@ -1,4 +1,6 @@
 package com.flavioramses.huellitasbackend.model;
 
-public class Admin {
+public enum UserRole {
+    ADMIN,
+    USER
 }
