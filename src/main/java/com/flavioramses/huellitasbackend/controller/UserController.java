@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/hotelHuellitas")
+@RequestMapping(path = "/user")
 public class UserController {
 
     @Autowired UserService userService;
@@ -19,8 +19,8 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{userId}")
-    public Optional<User> getUserById(@PathVariable("userId") Long userId) {
+    @GetMapping("/{Id}")
+    public Optional<User> getUserById(@PathVariable("Id") Long userId) {
         return userService.getUserById(userId);
     }
 
@@ -29,8 +29,8 @@ public class UserController {
         userService.saveUser(user);
     }
 
-    @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable("userId") Long userId) {
+    @DeleteMapping("/{Id}")
+    public void deleteUserById(@PathVariable("Id") Long userId) {
         userService.deleteUserById(userId);
     }
 
