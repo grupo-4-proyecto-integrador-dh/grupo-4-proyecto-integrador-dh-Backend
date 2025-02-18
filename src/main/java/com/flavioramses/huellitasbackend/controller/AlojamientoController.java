@@ -5,7 +5,6 @@ import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.service.AlojamientoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +19,15 @@ public class AlojamientoController {
     @Autowired
     public AlojamientoService alojamientoService;
 
-    @PostMapping("/saveAlojamiento")
+    @PostMapping("/savealojamiento")
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody Alojamiento alojamiento) throws BadRequestException {
-        /*Alojamiento alojamientoGuardado = alojamientoService.saveAlojamiento(alojamiento);
+        Alojamiento alojamientoGuardado = alojamientoService.saveAlojamiento(alojamiento);
         Optional<Alojamiento> alojamientoById = alojamientoService.getAlojamientoById(alojamiento.getId());
         if(alojamientoById.isPresent()){
             return ResponseEntity.ok(alojamientoGuardado);
-        }else{
+        } else {
             throw new BadRequestException("Hubo un error al registrar el alojamiento");
-        }*/
-
-
-        return ResponseEntity.status(200).body(alojamientoService.saveAlojamiento(alojamiento));
+        }
     }
 
     @GetMapping("/listartodos")
@@ -39,15 +35,14 @@ public class AlojamientoController {
         return ResponseEntity.status(200).body(alojamientoService.getAllAlojamientos());
     }
 
-    @GetMapping("buscar/{Id}")
-    public ResponseEntity<Optional<Alojamiento>> getAlojamientoById(@PathVariable Long alojamientoId) throws ResourceNotFoundException {
+    @GetMapping("/buscar/{Id}")
+    public ResponseEntity<Optional<Alojamiento>> getAlojamientoById(@PathVariable("Id") Long alojamientoId) throws ResourceNotFoundException {
         Optional<Alojamiento> alojamientoBuscado = alojamientoService.getAlojamientoById(alojamientoId);
         if(alojamientoBuscado.isPresent()){
             return ResponseEntity.ok(alojamientoBuscado);
         }else{
             throw new ResourceNotFoundException("Alojamiento no encontrado");
         }
-
     }
 
     @PutMapping

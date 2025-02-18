@@ -26,4 +26,6 @@ public class Alojamiento {
 
     @Column(name = "url_imagen")
     private String imagenUrl;
+
+
 }
