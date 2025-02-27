@@ -1,7 +1,11 @@
 package com.flavioramses.huellitasbackend.model;
 
+
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -17,15 +21,8 @@ public class Alojamiento {
 
     @Column(unique = true)
     private String nombre;
-
-    @Column
     private String descripcion;
-
-    @Column
     private Double precio;
-
     @Column(name = "url_imagen")
     private String imagenUrl;
-
-
 }
