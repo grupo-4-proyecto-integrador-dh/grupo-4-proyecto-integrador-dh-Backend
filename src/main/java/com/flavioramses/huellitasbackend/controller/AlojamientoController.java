@@ -19,7 +19,7 @@ public class AlojamientoController {
     @Autowired
     public AlojamientoService alojamientoService;
 
-    @PostMapping("/savealojamiento")
+    @PostMapping
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody Alojamiento alojamiento) throws BadRequestException {
         Alojamiento alojamientoGuardado = alojamientoService.saveAlojamiento(alojamiento);
         Optional<Alojamiento> alojamientoById = alojamientoService.getAlojamientoById(alojamiento.getId());
@@ -30,14 +30,14 @@ public class AlojamientoController {
         }
     }
 
-    @GetMapping("/listartodos")
+    @GetMapping
     public ResponseEntity<List<Alojamiento>> getAllAlojamientos() {
         return ResponseEntity.status(200).body(alojamientoService.getAllAlojamientos());
     }
 
-    @GetMapping("/buscar/{Id}")
-    public ResponseEntity<Optional<Alojamiento>> getAlojamientoById(@PathVariable("Id") Long alojamientoId) throws ResourceNotFoundException {
-        Optional<Alojamiento> alojamientoBuscado = alojamientoService.getAlojamientoById(alojamientoId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Alojamiento>> getAlojamientoById(@PathVariable("id") Long id) throws ResourceNotFoundException {
+        Optional<Alojamiento> alojamientoBuscado = alojamientoService.getAlojamientoById(id);
         if(alojamientoBuscado.isPresent()){
             return ResponseEntity.ok(alojamientoBuscado);
         }else{
@@ -54,9 +54,9 @@ public class AlojamientoController {
           }
     }
 
-    @DeleteMapping("/eliminar/{Id}")
-    public ResponseEntity<Void> deleteAlojamientoById(@PathVariable("Id") Long alojamientoId) {
-        alojamientoService.deleteAlojamientoById(alojamientoId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlojamientoById(@PathVariable("id") Long id) {
+        alojamientoService.deleteAlojamientoById(id);
         return ResponseEntity.status(204).build();
     }
 }

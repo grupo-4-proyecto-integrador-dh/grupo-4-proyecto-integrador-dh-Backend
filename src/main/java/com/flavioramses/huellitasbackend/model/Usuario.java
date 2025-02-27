@@ -15,12 +15,10 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    @Column(name = "apellido")
     private String apellido;
     @Column(unique = true)
     private String email;
-    @Column(name = "contrasena")
-    private String password;
+    private String contrasena;
 
     // Enum
     @Enumerated(EnumType.STRING)

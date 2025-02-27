@@ -20,9 +20,9 @@ public class UsuarioController {
         return usuarioService.getAllUsuarios();
     }
 
-    @GetMapping("/{Id}")
-    public Optional<Usuario> getUsuarioById(@PathVariable("Id") Long usuarioId) {
-        return usuarioService.getUsuarioById(usuarioId);
+    @GetMapping("/{id}")
+    public Optional<Usuario> getUsuarioById(@PathVariable Long id) {
+        return usuarioService.getUsuarioById(id);
     }
 
     @PostMapping
@@ -30,9 +30,9 @@ public class UsuarioController {
         usuarioService.saveUsuario(usuario);
     }
 
-    @DeleteMapping("/{Id}")
-    public void deleteUsuarioById(@PathVariable("Id") Long usuarioId) {
-        usuarioService.deleteUsuarioById(usuarioId);
+    @DeleteMapping("/{id}")
+    public void deleteUsuarioById(@PathVariable Long id) {
+        usuarioService.deleteUsuarioById(id);
     }
 
 

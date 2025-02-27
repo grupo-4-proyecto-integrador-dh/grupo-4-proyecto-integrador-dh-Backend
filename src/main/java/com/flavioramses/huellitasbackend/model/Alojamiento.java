@@ -21,13 +21,8 @@ public class Alojamiento {
 
     @Column(unique = true)
     private String nombre;
-
-    @Column
     private String descripcion;
-
-    @Column
     private Double precio;
-
     @Column(name = "url_imagen")
     private String imagenUrl;
 }
