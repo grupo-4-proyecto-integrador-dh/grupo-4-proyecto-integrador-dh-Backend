@@ -10,14 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "usuarios")
-public class User {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nombre")
-    private String firstName;
+    private String nombre;
     @Column(name = "apellido")
-    private String lastName;
+    private String apellido;
     @Column(unique = true)
     private String email;
     @Column(name = "contrasena")
@@ -25,7 +24,7 @@ public class User {
 
     // Enum
     @Enumerated(EnumType.STRING)
-    private UserRole rol;
+    private RolUsuario rol;
 
 
 
