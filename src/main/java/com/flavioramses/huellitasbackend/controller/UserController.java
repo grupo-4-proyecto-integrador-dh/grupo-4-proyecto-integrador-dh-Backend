@@ -1,38 +1,43 @@
 package com.flavioramses.huellitasbackend.controller;
 
+import com.flavioramses.huellitasbackend.model.User;
+import com.flavioramses.huellitasbackend.model.UserRole;
 import com.flavioramses.huellitasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.flavioramses.huellitasbackend.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/user")
+@RequestMapping("/usuarios")
 public class UserController {
 
-    @Autowired UserService userService;
+    @Autowired
+    private UserService userService;
 
+    
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{Id}")
-    public Optional<User> getUserById(@PathVariable("Id") Long userId) {
-        return userService.getUserById(userId);
+    @GetMapping("/rol/{role}")
+    public ResponseEntity<List<User>> getUsersByRole(@PathVariable UserRole role) {
+        return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 
-    @PostMapping
-    public void saveUser(@RequestBody User user) {
-        userService.saveUser(user);
+    @PutMapping("/{userId}/rol/{role}")
+    public ResponseEntity<String> assignRole(@PathVariable Long userId, @PathVariable UserRole role) {
+        userService.assignRole(userId, role);
+        return ResponseEntity.ok("Rol actualizado correctamente.");
     }
 
-    @DeleteMapping("/{Id}")
-    public void deleteUserById(@PathVariable("Id") Long userId) {
-        userService.deleteUserById(userId);
+    @PutMapping("/{userId}/revocar-admin")
+    public ResponseEntity<String> removeAdminRole(@PathVariable Long userId) {
+        userService.removeAdminRole(userId);
+        return ResponseEntity.ok("Permiso de administrador revocado correctamente.");
     }
-
-
 }
+

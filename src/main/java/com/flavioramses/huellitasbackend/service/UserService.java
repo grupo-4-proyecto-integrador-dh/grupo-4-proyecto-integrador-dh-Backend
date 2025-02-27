@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.User;
+import com.flavioramses.huellitasbackend.model.UserRole;
 import com.flavioramses.huellitasbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,23 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById (Long id) {
+    public List<User> getUsersByRole(UserRole role) {
+        return userRepository.findByRol(role);
+    }
+
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public void saveUser(User user) {
+    
+    public void assignRole(Long userId, UserRole newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setRol(newRole);
         userRepository.save(user);
     }
 
-    public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+    public void removeAdminRole(Long userId) {
+        assignRole(userId, UserRole.USER);
     }
 }
