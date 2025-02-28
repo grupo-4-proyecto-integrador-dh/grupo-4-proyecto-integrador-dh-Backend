@@ -24,9 +24,9 @@ public class MascotaController {
         return mascotaService.getAllMascotas();
     }
 
-    @GetMapping("/{Id}")
-    public Optional<Mascota> getUserById(@PathVariable("Id") Long mascotaId) {
-        return mascotaService.getMascotaById(mascotaId);
+    @GetMapping("/{id}")
+    public Optional<Mascota> getUserById(@PathVariable Long id) {
+        return mascotaService.getMascotaById(id);
     }
 
     @PostMapping
@@ -34,9 +34,9 @@ public class MascotaController {
         mascotaService.saveMascota(mascota);
     }
 
-    @DeleteMapping("/{Id}")
-    public void deleteMascotaById(@PathVariable("Id") Long mascotaId) {
-        mascotaService.deleteMascotaById(mascotaId);
+    @DeleteMapping("/{id}")
+    public void deleteMascotaById(@PathVariable Long id) {
+        mascotaService.deleteMascotaById(id);
     }
 
 }
