@@ -14,11 +14,16 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "mascota_id", nullable = false)
+    @JoinColumn(name = "mascota_id", referencedColumnName = "id", nullable = false)
     private Mascota mascota;
     @ManyToOne
-    @JoinColumn(name = "alojamiento_id", nullable = false)
+    @JoinColumn(name = "alojamiento_id", referencedColumnName = "id", nullable = false)
     private Alojamiento alojamiento;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id", nullable = false)
+    private Cliente cliente;
+
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private LocalTime horaDesde;

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,7 @@ public class Alojamiento {
     private Double precio;
     @Column(name = "url_imagen")
     private String imagenUrl;
+
+    @OneToMany(mappedBy = "alojamiento")
+    private List<Reserva> reservas;
 }
