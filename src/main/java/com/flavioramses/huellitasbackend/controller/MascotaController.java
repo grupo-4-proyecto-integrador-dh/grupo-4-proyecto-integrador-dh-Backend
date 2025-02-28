@@ -25,12 +25,12 @@ public class MascotaController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Mascota> getUserById(@PathVariable Long id) {
+    public Optional<Mascota> getMascotaById(@PathVariable Long id) {
         return mascotaService.getMascotaById(id);
     }
 
     @PostMapping
-    public void saveUser(@RequestBody Mascota mascota) {
+    public void saveMascota(@RequestBody Mascota mascota) {
         mascotaService.saveMascota(mascota);
     }
 
