@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.Alojamiento;
+import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,18 @@ public class AlojamientoService {
         return alojamientoRepository.findAll();
     }
 
-    public Alojamiento updateAlojamiento(Alojamiento alojamiento) {
+    public Alojamiento updateAlojamiento(Long id, Alojamiento alojamientoNuevo) {
+        Alojamiento alojamiento = alojamientoRepository.findById(id).orElse(null);
+
+        if(alojamiento == null || alojamientoNuevo == null) return null;
+
+        alojamiento.setId(id);
+        alojamiento.setNombre(alojamientoNuevo.getNombre());
+        alojamiento.setDescripcion(alojamientoNuevo.getDescripcion());
+        alojamiento.setPrecio(alojamientoNuevo.getPrecio());
+
         return alojamientoRepository.save(alojamiento);
+
     }
 
     public Optional<Alojamiento> getAlojamientoById (Long id) {

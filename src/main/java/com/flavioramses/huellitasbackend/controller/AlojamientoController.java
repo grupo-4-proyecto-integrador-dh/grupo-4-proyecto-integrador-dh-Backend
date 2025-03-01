@@ -45,10 +45,10 @@ public class AlojamientoController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<Alojamiento> updateAlojamiento(@RequestBody Alojamiento alojamiento) throws BadRequestException {
+    @PutMapping("/{id}")
+    public ResponseEntity<Alojamiento> updateAlojamiento(@PathVariable Long id, @RequestBody Alojamiento alojamiento) throws BadRequestException {
           try{
-              return ResponseEntity.ok(alojamientoService.updateAlojamiento(alojamiento));
+              return ResponseEntity.ok(alojamientoService.updateAlojamiento(id, alojamiento));
           }catch (Exception e){
               throw new BadRequestException("Ocurrio un error al actualizar el alojamiento");
           }
