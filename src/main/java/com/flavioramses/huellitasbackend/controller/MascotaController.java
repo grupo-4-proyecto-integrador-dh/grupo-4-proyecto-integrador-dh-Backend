@@ -36,7 +36,7 @@ public class MascotaController {
         try{
             return ResponseEntity.ok(mascotaService.updateMascota(id,mascota));
         }catch (Exception e){
-            throw new BadRequestException("Ocurrio un error al actualizar el mascota");
+            throw new BadRequestException("Ocurrio un error al actualizar la mascota");
         }
     }
 
@@ -47,7 +47,7 @@ public class MascotaController {
         if(mascotaById.isPresent()){
             return ResponseEntity.ok(mascotaGuardado);
         } else {
-            throw new BadRequestException("Hubo un error al registrar el mascota");
+            throw new BadRequestException("Hubo un error al registrar la mascota");
         }
     }
 

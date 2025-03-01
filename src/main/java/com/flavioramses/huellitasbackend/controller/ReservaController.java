@@ -2,6 +2,9 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.model.Alojamiento;
+import com.flavioramses.huellitasbackend.model.Cliente;
+import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.model.Reserva;
 import com.flavioramses.huellitasbackend.service.ReservaService;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +28,7 @@ public class ReservaController {
         if(reservaById.isPresent()){
             return ResponseEntity.ok(reservaGuardado);
         } else {
-            throw new BadRequestException("Hubo un error al registrar el reserva");
+            throw new BadRequestException("Hubo un error al registrar la reserva");
         }
     }
 
@@ -34,13 +37,44 @@ public class ReservaController {
         return ResponseEntity.status(200).body(reservaService.getAllReservas());
     }
 
+    @GetMapping("/{id}/alojamiento")
+    public ResponseEntity<Alojamiento> getAlojamientoAsociado(@PathVariable Long id) throws BadRequestException {
+        Optional<Reserva> reservaById = reservaService.getReservaById(id);
+        if(reservaById.isEmpty()){
+            throw new BadRequestException("No existe una reserva con el id " + id);
+        }
+
+        return ResponseEntity.status(200).body(reservaById.get().getAlojamiento());
+    }
+
+    @GetMapping("/{id}/cliente")
+    public ResponseEntity<Cliente> getClienteAsociado(@PathVariable Long id) throws BadRequestException {
+        Optional<Reserva> reservaById = reservaService.getReservaById(id);
+        if(reservaById.isEmpty()){
+            throw new BadRequestException("No existe una reserva con el id " + id);
+        }
+
+        return ResponseEntity.status(200).body(reservaById.get().getCliente());
+    }
+
+    @GetMapping("/{id}/mascota")
+    public ResponseEntity<Mascota> getMascotaAsociada(@PathVariable Long id) throws BadRequestException {
+        Optional<Reserva> reservaById = reservaService.getReservaById(id);
+        if(reservaById.isEmpty()){
+            throw new BadRequestException("No existe una reserva con el id " + id);
+        }
+
+        return ResponseEntity.status(200).body(reservaById.get().getMascota());
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Reserva>> getReservaById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         Optional<Reserva> reservaBuscado = reservaService.getReservaById(id);
         if(reservaBuscado.isPresent()){
             return ResponseEntity.ok(reservaBuscado);
         }else{
-            throw new ResourceNotFoundException("Reserva no encontrado");
+            throw new ResourceNotFoundException("Reserva no encontrada");
         }
     }
 
@@ -49,7 +83,7 @@ public class ReservaController {
         try{
             return ResponseEntity.ok(reservaService.updateReserva(id,reserva));
         }catch (Exception e){
-            throw new BadRequestException("Ocurrio un error al actualizar el reserva");
+            throw new BadRequestException("Ocurrio un error al actualizar la reserva");
         }
     }
 
