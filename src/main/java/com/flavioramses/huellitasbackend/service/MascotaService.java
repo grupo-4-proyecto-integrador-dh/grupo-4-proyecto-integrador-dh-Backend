@@ -27,8 +27,8 @@ public class MascotaService {
         return mascotaRepository.findById(id);
     }
 
-    public void saveMascota(Mascota mascota) {
-        mascotaRepository.save(mascota);
+    public Mascota saveMascota(Mascota mascota) {
+        return mascotaRepository.save(mascota);
     }
 
     public void deleteMascotaById(Long id) {

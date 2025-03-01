@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,7 @@ public class Alojamiento {
     private Double precio;
     @Column(name = "url_imagen")
     private String imagenUrl;
-
+    @JsonManagedReference(value = "reserva-alojamiento")
     @OneToMany(mappedBy = "alojamiento")
     private List<Reserva> reservas;
 }

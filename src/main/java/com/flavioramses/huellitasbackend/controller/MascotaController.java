@@ -1,8 +1,11 @@
 package com.flavioramses.huellitasbackend.controller;
 
+import com.flavioramses.huellitasbackend.Exception.BadRequestException;
+import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.service.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +33,14 @@ public class MascotaController {
     }
 
     @PostMapping
-    public void saveMascota(@RequestBody Mascota mascota) {
-        mascotaService.saveMascota(mascota);
+    public ResponseEntity<Mascota> saveMascota(@RequestBody Mascota mascota) throws BadRequestException {
+        Mascota mascotaGuardado = mascotaService.saveMascota(mascota);
+        Optional<Mascota> mascotaById = mascotaService.getMascotaById(mascota.getId());
+        if(mascotaById.isPresent()){
+            return ResponseEntity.ok(mascotaGuardado);
+        } else {
+            throw new BadRequestException("Hubo un error al registrar el mascota");
+        }
     }
 
     @DeleteMapping("/{id}")
