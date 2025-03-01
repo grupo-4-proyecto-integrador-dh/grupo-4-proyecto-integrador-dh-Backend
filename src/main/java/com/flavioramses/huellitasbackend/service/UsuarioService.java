@@ -23,8 +23,8 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
-    public void saveUsuario(Usuario usuario) {
-        usuarioRepository.save(usuario);
+    public Usuario saveUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
     public List<Usuario> getUsersByRole(RolUsuario role) {

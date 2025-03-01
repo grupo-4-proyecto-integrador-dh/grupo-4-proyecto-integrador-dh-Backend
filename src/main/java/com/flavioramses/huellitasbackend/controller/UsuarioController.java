@@ -1,5 +1,9 @@
 package com.flavioramses.huellitasbackend.controller;
 
+import com.flavioramses.huellitasbackend.Exception.BadRequestException;
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
+import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +22,30 @@ public class UsuarioController {
     UsuarioService usuarioService;
 
     @GetMapping
-    public List<Usuario> getAllUsuarios() {
-        return usuarioService.getAllUsuarios();
+    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
+        List<Usuario> usuarios = usuarioService.getAllUsuarios();
+        List<UsuarioDTO> usuarioDTOs = UsuarioDTO.toUserDTOList(usuarios);
+        return ResponseEntity.ok(usuarioDTOs);
     }
 
     @GetMapping("/{id}")
-    public Optional<Usuario> getUsuarioById(@PathVariable Long id) {
-        return usuarioService.getUsuarioById(id);
+    public UsuarioDTO getUsuarioById(@PathVariable Long id) throws ResourceNotFoundException {
+        Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
+
+        if(usuario.isEmpty()) throw new ResourceNotFoundException("Usuario con id "+id+" no encontrado");
+
+        return UsuarioDTO.toUsuarioDTO(usuario.get());
     }
 
     @PostMapping
-    public void saveUsuario(@RequestBody Usuario usuario) {
-        usuarioService.saveUsuario(usuario);
+    public ResponseEntity<UsuarioDTO> saveUsuario(@RequestBody Usuario usuario) throws BadRequestException {
+        Usuario usuarioGuardado = usuarioService.saveUsuario(usuario);
+        Optional<Usuario> usuarioById = usuarioService.getUsuarioById(usuario.getId());
+        if(usuarioById.isPresent()){
+            return ResponseEntity.ok(UsuarioDTO.toUsuarioDTO(usuarioGuardado));
+        } else {
+            throw new BadRequestException("Hubo un error al registrar la usuario");
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -38,8 +54,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/rol/{role}")
-    public ResponseEntity<List<Usuario>> getUsuariosByRole(@PathVariable RolUsuario role) {
-        return ResponseEntity.ok(usuarioService.getUsersByRole(role));
+    public ResponseEntity<List<UsuarioDTO>> getUsuariosByRole(@PathVariable RolUsuario role) {
+        List<UsuarioDTO> usuarioDTOs = UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role));
+        return ResponseEntity.ok(usuarioDTOs);
     }
 
     @PutMapping("/{usuarioId}/rol/{role}")
