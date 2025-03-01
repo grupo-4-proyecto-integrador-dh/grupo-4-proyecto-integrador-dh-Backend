@@ -2,7 +2,6 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.model.Mascota;
-import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.service.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +29,15 @@ public class MascotaController {
     @GetMapping("/{id}")
     public Optional<Mascota> getMascotaById(@PathVariable Long id) {
         return mascotaService.getMascotaById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Mascota> updateMascota(@PathVariable Long id, @RequestBody Mascota mascota) throws BadRequestException {
+        try{
+            return ResponseEntity.ok(mascotaService.updateMascota(id,mascota));
+        }catch (Exception e){
+            throw new BadRequestException("Ocurrio un error al actualizar el mascota");
+        }
     }
 
     @PostMapping

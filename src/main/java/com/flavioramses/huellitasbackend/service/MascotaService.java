@@ -1,7 +1,6 @@
 package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.Mascota;
-import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
 import com.flavioramses.huellitasbackend.repository.MascotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,18 @@ public class MascotaService {
 
     public Optional<Mascota> getMascotaById(Long id) {
         return mascotaRepository.findById(id);
+    }
+
+    public Mascota updateMascota(Long id, Mascota mascotaNueva) {
+        Mascota mascota = mascotaRepository.findById(id).orElse(null);
+
+        if(mascota == null || mascotaNueva == null) return null;
+
+        mascota.setId(id);
+        mascota.setNombre(mascotaNueva.getNombre());
+        // TODO: actualizar futuros campos
+
+        return mascotaRepository.save(mascota);
     }
 
     public Mascota saveMascota(Mascota mascota) {

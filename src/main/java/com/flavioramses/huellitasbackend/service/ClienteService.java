@@ -24,8 +24,15 @@ public class ClienteService {
         return clienteRepository.findById(id);
     }
 
-    public Cliente updateCliente(Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public Cliente updateCliente(Long id,Cliente cliente) {
+        Cliente clienteViejo = clienteRepository.findById(id).orElse(null);
+
+        if(cliente == null) return null;
+
+        Cliente clienteNuevo = clienteViejo;
+        // TODO: Setear campos cliente excepto usuario y reservas
+
+        return clienteRepository.save(clienteNuevo);
     }
 
     public Cliente saveCliente(Cliente cliente) {

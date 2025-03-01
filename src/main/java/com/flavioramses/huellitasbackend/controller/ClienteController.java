@@ -44,10 +44,10 @@ public class ClienteController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<Cliente> updateCliente(@RequestBody Cliente cliente) throws BadRequestException {
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id,@RequestBody Cliente cliente) throws BadRequestException {
         try{
-            return ResponseEntity.ok(clienteService.updateCliente(cliente));
+            return ResponseEntity.ok(clienteService.updateCliente(id,cliente));
         }catch (Exception e){
             throw new BadRequestException("Ocurrio un error al actualizar el cliente");
         }
