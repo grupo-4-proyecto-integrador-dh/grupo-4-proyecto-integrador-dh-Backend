@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.Reserva;
+import com.flavioramses.huellitasbackend.model.Reserva;
 import com.flavioramses.huellitasbackend.repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,22 @@ public class ReservaService {
         return reservaRepository.findById(id);
     }
 
-    public void saveMascota(Reserva reserva) {
-        reservaRepository.save(reserva);
+    public Reserva updateReserva(Long id, Reserva reservaNueva) {
+        Reserva reserva = reservaRepository.findById(id).orElse(null);
+
+        if(reserva == null || reservaNueva == null) return null;
+
+        reserva.setId(id);
+        reserva.setFechaDesde(reservaNueva.getFechaDesde());
+        reserva.setFechaHasta(reservaNueva.getFechaHasta());
+        reserva.setHoraDesde(reservaNueva.getHoraDesde());
+        reserva.setHoraHasta(reservaNueva.getHoraHasta());
+        // TODO: actualizar campos basado en la lógica, por ahora solo la fecha y hora
+
+        return reservaRepository.save(reserva);
+    }
+    public Reserva saveReserva(Reserva reserva) {
+        return reservaRepository.save(reserva);
     }
 
     public void deleteReservaById(Long id) {
