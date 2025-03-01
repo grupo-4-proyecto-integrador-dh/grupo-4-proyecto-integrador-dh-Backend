@@ -1,5 +1,6 @@
 package com.flavioramses.huellitasbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class Mascota {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    @JsonManagedReference(value = "reserva-mascota")
+    @JsonIgnore
     @OneToMany(mappedBy = "mascota")
     private List<Reserva> reservas;
     // TODO: Cliente ~ Usuario
