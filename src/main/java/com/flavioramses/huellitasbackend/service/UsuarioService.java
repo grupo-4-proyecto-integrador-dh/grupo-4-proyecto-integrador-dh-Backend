@@ -1,9 +1,11 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.flavioramses.huellitasbackend.security.SecurityConfig;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +14,13 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder = new SecurityConfig().passwordEncoder();
+
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
@@ -44,8 +51,22 @@ public class UsuarioService {
     }
 
     public void removeAdminRole(Long usuarioId) {
-        assignRole(usuarioId, RolUsuario.USUARIO);
+        assignRole(usuarioId, RolUsuario.USER);
     }
 
+    public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) {
+        if (usuarioRepository.findByEmail(registroDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email ya registrado");
+        }
 
+        Usuario usuario = new Usuario();
+        usuario.setNombre(registroDTO.getNombre());
+        usuario.setApellido(registroDTO.getApellido());
+        usuario.setEmail(registroDTO.getEmail());
+
+        usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
+        usuario.setRol(RolUsuario.USER);
+
+        return usuarioRepository.save(usuario);
+    }
 }

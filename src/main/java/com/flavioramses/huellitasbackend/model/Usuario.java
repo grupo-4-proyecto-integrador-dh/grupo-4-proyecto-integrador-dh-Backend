@@ -18,6 +18,7 @@ public class Usuario {
     private String apellido;
     @Column(unique = true)
     private String email;
+    
     private String contrasena;
 
     // Enum

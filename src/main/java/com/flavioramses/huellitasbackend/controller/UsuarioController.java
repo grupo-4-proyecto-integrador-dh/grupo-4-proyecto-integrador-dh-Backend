@@ -5,6 +5,7 @@ import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
+import com.flavioramses.huellitasbackend.security.SecurityConfig;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,12 +40,14 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> saveUsuario(@RequestBody Usuario usuario) throws BadRequestException {
+        String contrasenaEncriptada = new SecurityConfig().passwordEncoder().encode(usuario.getContrasena());
+        usuario.setContrasena(contrasenaEncriptada);
         Usuario usuarioGuardado = usuarioService.saveUsuario(usuario);
         Optional<Usuario> usuarioById = usuarioService.getUsuarioById(usuario.getId());
         if(usuarioById.isPresent()){
             return ResponseEntity.ok(UsuarioDTO.toUsuarioDTO(usuarioGuardado));
         } else {
-            throw new BadRequestException("Hubo un error al registrar la usuario");
+            throw new BadRequestException("Hubo un error al registrar el usuario");
         }
     }
 
