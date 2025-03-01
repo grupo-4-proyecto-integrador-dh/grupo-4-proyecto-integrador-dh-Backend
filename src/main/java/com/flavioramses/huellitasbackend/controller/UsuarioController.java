@@ -1,7 +1,9 @@
 package com.flavioramses.huellitasbackend.controller;
 
+import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.flavioramses.huellitasbackend.model.Usuario;
 
@@ -35,5 +37,20 @@ public class UsuarioController {
         usuarioService.deleteUsuarioById(id);
     }
 
+    @GetMapping("/rol/{role}")
+    public ResponseEntity<List<Usuario>> getUsuariosByRole(@PathVariable RolUsuario role) {
+        return ResponseEntity.ok(usuarioService.getUsersByRole(role));
+    }
 
+    @PutMapping("/{usuarioId}/rol/{role}")
+    public ResponseEntity<String> assignRole(@PathVariable Long usuarioId, @PathVariable RolUsuario role) {
+        usuarioService.assignRole(usuarioId, role);
+        return ResponseEntity.ok("Rol actualizado correctamente.");
+    }
+
+    @PutMapping("/{usuarioId}/revocar-admin")
+    public ResponseEntity<String> removeAdminRole(@PathVariable Long usuarioId) {
+        usuarioService.removeAdminRole(usuarioId);
+        return ResponseEntity.ok("Permiso de administrador revocado correctamente.");
+    }
 }
