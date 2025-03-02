@@ -16,9 +16,9 @@ public class Usuario {
     private Long id;
     private String nombre;
     private String apellido;
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
-    
+    @Column(nullable = false)
     private String contrasena;
 
     // Enum
