@@ -2,6 +2,8 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.ClienteDTO;
+import com.flavioramses.huellitasbackend.dto.MascotaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
@@ -51,23 +53,31 @@ public class ReservaController {
     }
 
     @GetMapping("/{id}/cliente")
-    public ResponseEntity<Cliente> getClienteAsociado(@PathVariable Long id) throws BadRequestException {
+    public ResponseEntity<ClienteDTO> getClienteAsociado(@PathVariable Long id) throws BadRequestException {
         Optional<Reserva> reservaById = reservaService.getReservaById(id);
         if(reservaById.isEmpty()){
             throw new BadRequestException("No existe una reserva con el id " + id);
         }
 
-        return ResponseEntity.status(200).body(reservaById.get().getCliente());
+        return ResponseEntity.status(200).body(
+                ClienteDTO.toClienteDTO(
+                        reservaById.get().getCliente()
+                )
+        );
     }
 
     @GetMapping("/{id}/mascota")
-    public ResponseEntity<Mascota> getMascotaAsociada(@PathVariable Long id) throws BadRequestException {
+    public ResponseEntity<MascotaDTO> getMascotaAsociada(@PathVariable Long id) throws BadRequestException {
         Optional<Reserva> reservaById = reservaService.getReservaById(id);
         if(reservaById.isEmpty()){
             throw new BadRequestException("No existe una reserva con el id " + id);
         }
 
-        return ResponseEntity.status(200).body(reservaById.get().getMascota());
+        return ResponseEntity.status(200).body(
+                MascotaDTO.toMascotaDTO(
+                        reservaById.get().getMascota()
+                )
+        );
     }
 
 

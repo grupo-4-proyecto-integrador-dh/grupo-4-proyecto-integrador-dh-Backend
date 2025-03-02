@@ -25,7 +25,7 @@ public class MascotaController {
 
     @GetMapping
     public List<MascotaDTO> getAllMascotas() {
-        return MascotaDTO.toUserDTOList(mascotaService.getAllMascotas());
+        return MascotaDTO.toMascotaDTOList(mascotaService.getAllMascotas());
     }
 
     @GetMapping("/{id}")

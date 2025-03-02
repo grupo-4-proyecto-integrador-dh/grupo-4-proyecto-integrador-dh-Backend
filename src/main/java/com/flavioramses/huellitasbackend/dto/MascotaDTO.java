@@ -22,7 +22,7 @@ public class MascotaDTO {
         return new MascotaDTO(mascota);
     }
 
-    public static List<MascotaDTO> toUserDTOList(List<Mascota> mascotas) {
+    public static List<MascotaDTO> toMascotaDTOList(List<Mascota> mascotas) {
         return mascotas.stream()
                 .map(MascotaDTO::toMascotaDTO)
                 .collect(Collectors.toList());
