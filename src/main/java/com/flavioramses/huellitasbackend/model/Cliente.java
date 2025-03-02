@@ -21,4 +21,7 @@ public class Cliente {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas;
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    private List<Mascota> mascotas;
 }
