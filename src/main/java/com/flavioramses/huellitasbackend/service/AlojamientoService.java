@@ -31,6 +31,7 @@ public class AlojamientoService {
         alojamiento.setId(id);
         alojamiento.setNombre(alojamientoNuevo.getNombre());
         alojamiento.setDescripcion(alojamientoNuevo.getDescripcion());
+        alojamiento.setCategorias(alojamientoNuevo.getCategorias());
         alojamiento.setPrecio(alojamientoNuevo.getPrecio());
 
         return alojamientoRepository.save(alojamiento);
