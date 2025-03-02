@@ -31,7 +31,6 @@ public class MascotaService {
 
         if(mascota == null || mascotaNueva == null) return null;
 
-        mascota.setId(id);
         mascota.setNombre(mascotaNueva.getNombre());
         // TODO: actualizar futuros campos
 

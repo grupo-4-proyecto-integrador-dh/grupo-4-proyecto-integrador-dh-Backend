@@ -24,12 +24,12 @@ public class ClienteService {
         return clienteRepository.findById(id);
     }
 
-    public Cliente updateCliente(Long id,Cliente cliente) {
-        Cliente clienteViejo = clienteRepository.findById(id).orElse(null);
+    public Cliente updateCliente(Long id,Cliente clienteNuevo) {
+        Cliente cliente = clienteRepository.findById(id).orElse(null);
 
-        if(cliente == null) return null;
+        if(cliente == null || clienteNuevo == null) return null;
 
-        Cliente clienteNuevo = clienteViejo;
+        cliente.setNumeroTelefono(clienteNuevo.getNumeroTelefono());
         // TODO: Setear campos cliente excepto usuario y reservas
 
         return clienteRepository.save(clienteNuevo);

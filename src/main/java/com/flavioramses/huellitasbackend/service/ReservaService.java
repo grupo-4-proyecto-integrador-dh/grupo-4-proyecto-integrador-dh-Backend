@@ -33,7 +33,6 @@ public class ReservaService {
 
         if(reserva == null || reservaNueva == null) return null;
 
-        reserva.setId(id);
         reserva.setFechaDesde(reservaNueva.getFechaDesde());
         reserva.setFechaHasta(reservaNueva.getFechaHasta());
         reserva.setHoraDesde(reservaNueva.getHoraDesde());

@@ -19,7 +19,6 @@ public class Mascota {
     @JsonIgnore
     @OneToMany(mappedBy = "mascota")
     private List<Reserva> reservas;
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private Cliente cliente;
