@@ -9,6 +9,8 @@ import com.flavioramses.huellitasbackend.security.SecurityConfig;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.flavioramses.huellitasbackend.model.Usuario;
 
@@ -38,6 +40,14 @@ public class UsuarioController {
         return UsuarioDTO.toUsuarioDTO(usuario.get());
     }
 
+    @GetMapping("/rol/{id}")
+    public ResponseEntity<RolUsuario> getUsuarioRol(@PathVariable Long id) throws ResourceNotFoundException{
+        Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
+        if(usuario.isEmpty()) throw new ResourceNotFoundException("Usuario con id "+id+" no encontrado");
+        return ResponseEntity.ok(usuario.get().getRol());
+    }
+
+
     @PostMapping
     public ResponseEntity<UsuarioDTO> saveUsuario(@RequestBody Usuario usuario) throws BadRequestException {
         String contrasenaEncriptada = new SecurityConfig().passwordEncoder().encode(usuario.getContrasena());
@@ -58,19 +68,27 @@ public class UsuarioController {
 
     @GetMapping("/rol/{role}")
     public ResponseEntity<List<UsuarioDTO>> getUsuariosByRole(@PathVariable RolUsuario role) {
+        if (role != RolUsuario.ADMIN && role != RolUsuario.USER) {
+            throw new RuntimeException("Rol no válido");
+        }
         List<UsuarioDTO> usuarioDTOs = UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role));
         return ResponseEntity.ok(usuarioDTOs);
     }
 
     @PutMapping("/{usuarioId}/rol/{role}")
-    public ResponseEntity<String> assignRole(@PathVariable Long usuarioId, @PathVariable RolUsuario role) {
-        usuarioService.assignRole(usuarioId, role);
+    public ResponseEntity<String> assignRole(
+            @PathVariable Long usuarioId,
+            @PathVariable String role) { // Eliminado @AuthenticationPrincipal
+
+        RolUsuario rolUsuario;
+        try {
+            rolUsuario = RolUsuario.valueOf(role.toUpperCase()); // Convierte a RolUsuario
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Rol no válido: " + role);
+        }
+
+        usuarioService.assignRole(usuarioId, rolUsuario, "email"); // Se envia un email placeholder
         return ResponseEntity.ok("Rol actualizado correctamente.");
     }
 
-    @PutMapping("/{usuarioId}/revocar-admin")
-    public ResponseEntity<String> removeAdminRole(@PathVariable Long usuarioId) {
-        usuarioService.removeAdminRole(usuarioId);
-        return ResponseEntity.ok("Permiso de administrador revocado correctamente.");
-    }
 }

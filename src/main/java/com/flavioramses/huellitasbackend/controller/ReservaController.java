@@ -2,6 +2,10 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.ClienteDTO;
+import com.flavioramses.huellitasbackend.dto.MascotaDTO;
+import com.flavioramses.huellitasbackend.dto.ReservaDTO;
+import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.Mascota;
@@ -22,19 +26,20 @@ public class ReservaController {
         this.reservaService = reservaService;
     }
     @PostMapping
-    public ResponseEntity<Reserva> saveReserva(@RequestBody Reserva reserva) throws BadRequestException {
+    public ResponseEntity<ReservaDTO> saveReserva(@RequestBody Reserva reserva) throws BadRequestException {
         Reserva reservaGuardado = reservaService.saveReserva(reserva);
         Optional<Reserva> reservaById = reservaService.getReservaById(reserva.getId());
         if(reservaById.isPresent()){
-            return ResponseEntity.ok(reservaGuardado);
+            return ResponseEntity.ok(ReservaDTO.toReservaDTO(reservaGuardado));
         } else {
             throw new BadRequestException("Hubo un error al registrar la reserva");
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<Reserva>> getAllReservas() {
-        return ResponseEntity.status(200).body(reservaService.getAllReservas());
+    public ResponseEntity<List<ReservaDTO>> getAllReservas() {
+        List<ReservaDTO> reservaDTOs = ReservaDTO.toReservaDTOList(reservaService.getAllReservas());
+        return ResponseEntity.status(200).body(reservaDTOs);
     }
 
     @GetMapping("/{id}/alojamiento")
@@ -48,40 +53,52 @@ public class ReservaController {
     }
 
     @GetMapping("/{id}/cliente")
-    public ResponseEntity<Cliente> getClienteAsociado(@PathVariable Long id) throws BadRequestException {
+    public ResponseEntity<ClienteDTO> getClienteAsociado(@PathVariable Long id) throws BadRequestException {
         Optional<Reserva> reservaById = reservaService.getReservaById(id);
         if(reservaById.isEmpty()){
             throw new BadRequestException("No existe una reserva con el id " + id);
         }
 
-        return ResponseEntity.status(200).body(reservaById.get().getCliente());
+        return ResponseEntity.status(200).body(
+                ClienteDTO.toClienteDTO(
+                        reservaById.get().getCliente()
+                )
+        );
     }
 
     @GetMapping("/{id}/mascota")
-    public ResponseEntity<Mascota> getMascotaAsociada(@PathVariable Long id) throws BadRequestException {
+    public ResponseEntity<MascotaDTO> getMascotaAsociada(@PathVariable Long id) throws BadRequestException {
         Optional<Reserva> reservaById = reservaService.getReservaById(id);
         if(reservaById.isEmpty()){
             throw new BadRequestException("No existe una reserva con el id " + id);
         }
 
-        return ResponseEntity.status(200).body(reservaById.get().getMascota());
+        return ResponseEntity.status(200).body(
+                MascotaDTO.toMascotaDTO(
+                        reservaById.get().getMascota()
+                )
+        );
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Reserva>> getReservaById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        Optional<Reserva> reservaBuscado = reservaService.getReservaById(id);
-        if(reservaBuscado.isPresent()){
-            return ResponseEntity.ok(reservaBuscado);
+    public ResponseEntity<ReservaDTO> getReservaById(@PathVariable("id") Long id) throws ResourceNotFoundException {
+        Optional<Reserva> reservaBuscada = reservaService.getReservaById(id);
+        if(reservaBuscada.isPresent()){
+            return ResponseEntity.ok(ReservaDTO.toReservaDTO(
+                    reservaBuscada.get()
+            ));
         }else{
             throw new ResourceNotFoundException("Reserva no encontrada");
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reserva> updateReserva(@PathVariable Long id,@RequestBody Reserva reserva) throws BadRequestException {
+    public ResponseEntity<ReservaDTO> updateReserva(@PathVariable Long id,@RequestBody Reserva reserva) throws BadRequestException {
         try{
-            return ResponseEntity.ok(reservaService.updateReserva(id,reserva));
+            return ResponseEntity.ok(ReservaDTO.toReservaDTO(
+                    reservaService.updateReserva(id,reserva)
+            ));
         }catch (Exception e){
             throw new BadRequestException("Ocurrio un error al actualizar la reserva");
         }

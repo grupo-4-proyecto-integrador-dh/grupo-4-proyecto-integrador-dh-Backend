@@ -48,17 +48,20 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.deleteById(id);
     }
 
+    public Usuario getUsuarioByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario con email " + email + " no encontrado"));
+    }
 
-    public void assignRole(Long usuarioId, RolUsuario newRole) {
+
+    public void assignRole(Long usuarioId, RolUsuario newRole, String adminEmail) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         usuario.setRol(newRole);
         usuarioRepository.save(usuario);
     }
 
-    public void removeAdminRole(Long usuarioId) {
-        assignRole(usuarioId, RolUsuario.USER);
-    }
 
     public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) {
         if (usuarioRepository.findByEmail(registroDTO.getEmail()).isPresent()) {

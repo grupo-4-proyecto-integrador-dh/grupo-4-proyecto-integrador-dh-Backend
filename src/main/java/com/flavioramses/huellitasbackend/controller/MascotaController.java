@@ -1,6 +1,8 @@
 package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.MascotaDTO;
 import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.service.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +24,43 @@ public class MascotaController {
     }
 
     @GetMapping
-    public List<Mascota> getAllMascotas() {
-        return mascotaService.getAllMascotas();
+    public List<MascotaDTO> getAllMascotas() {
+        return MascotaDTO.toMascotaDTOList(mascotaService.getAllMascotas());
     }
 
     @GetMapping("/{id}")
-    public Optional<Mascota> getMascotaById(@PathVariable Long id) {
-        return mascotaService.getMascotaById(id);
+    public ResponseEntity<MascotaDTO> getMascotaById(@PathVariable("id") Long id) throws ResourceNotFoundException {
+        Optional<Mascota> mascotaBuscada = mascotaService.getMascotaById(id);
+        if(mascotaBuscada.isPresent()){
+            return ResponseEntity.ok(
+                    MascotaDTO.toMascotaDTO(mascotaBuscada.get())
+            );
+        }else{
+            throw new ResourceNotFoundException("Mascota no encontrada");
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mascota> updateMascota(@PathVariable Long id, @RequestBody Mascota mascota) throws BadRequestException {
+    public ResponseEntity<MascotaDTO> updateMascota(@PathVariable Long id, @RequestBody Mascota mascota) throws BadRequestException {
         try{
-            return ResponseEntity.ok(mascotaService.updateMascota(id,mascota));
+            return ResponseEntity.ok(
+                    MascotaDTO.toMascotaDTO(
+                            mascotaService.updateMascota(id,mascota)
+                    )
+            );
         }catch (Exception e){
             throw new BadRequestException("Ocurrio un error al actualizar la mascota");
         }
     }
 
     @PostMapping
-    public ResponseEntity<Mascota> saveMascota(@RequestBody Mascota mascota) throws BadRequestException {
-        Mascota mascotaGuardado = mascotaService.saveMascota(mascota);
+    public ResponseEntity<MascotaDTO> saveMascota(@RequestBody Mascota mascota) throws BadRequestException {
+        Mascota mascotaGuardada = mascotaService.saveMascota(mascota);
         Optional<Mascota> mascotaById = mascotaService.getMascotaById(mascota.getId());
         if(mascotaById.isPresent()){
-            return ResponseEntity.ok(mascotaGuardado);
+            return ResponseEntity.ok(
+                    MascotaDTO.toMascotaDTO(mascotaGuardada)
+            );
         } else {
             throw new BadRequestException("Hubo un error al registrar la mascota");
         }

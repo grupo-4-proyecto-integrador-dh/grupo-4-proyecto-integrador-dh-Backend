@@ -48,7 +48,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UsuarioLoginDTO loginRequest) {
-        System.out.println("Intento de login");
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -60,8 +59,11 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
 
-            Map<String, String> response = new HashMap<>();
+            Usuario usuario = usuarioService.getUsuarioByEmail(loginRequest.getEmail());
+
+            Map<String, Object> response = new HashMap<>();
             response.put("jwt", jwt);
+            response.put("usuario", UsuarioDTO.toUsuarioDTO(usuario));
 
             return ResponseEntity.ok(response);
 
