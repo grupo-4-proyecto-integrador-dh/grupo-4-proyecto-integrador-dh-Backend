@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -35,9 +34,9 @@ public class AlojamientoController {
                 throw new BadRequestException("El ID de la categoría no puede ser nulo.");
             }
 
-            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaIds());
+            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaId());
             if (!categoriaOptional.isPresent()) {
-                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds());
+                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaId());
             }
 
             Alojamiento alojamientoGuardado = alojamientoService.crearAlojamiento(alojamientoDTO);
@@ -60,7 +59,7 @@ public class AlojamientoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Alojamiento> getAlojamientoById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        Alojamiento alojamientoBuscado = alojamientoService.get(id)
+        Alojamiento alojamientoBuscado = alojamientoService.getAlojamientoById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado"));
         return ResponseEntity.ok(alojamientoBuscado);
     }

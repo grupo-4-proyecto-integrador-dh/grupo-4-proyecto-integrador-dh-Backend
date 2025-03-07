@@ -9,6 +9,7 @@ import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
 import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,17 +46,18 @@ public class AlojamientoService {
         return alojamientoRepository.save(alojamiento);
     }
 
-    public List<AlojamientoDashboardDTO> obtenerAlojamientosDashboardDTO() {
+    public List<AlojamientoDashboardDTO> getAlojamientosDashboardDTO() {
         List<Alojamiento> alojamientos = alojamientoRepository.findAll();
         return alojamientos.stream()
-                .map(this::convertirADashboardDTO)
+                .map(this::convertToDashboardDTO)
                 .collect(Collectors.toList());
     }
 
-    private AlojamientoDashboardDTO convertirADashboardDTO(Alojamiento alojamiento) {
+    private AlojamientoDashboardDTO convertToDashboardDTO(Alojamiento alojamiento) {
         return AlojamientoDashboardDTO.toAlojamientoDashboardDTO(alojamiento);
     }
 
+    @Transactional
     public Alojamiento actualizarAlojamiento(Long id, AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException {
         Alojamiento alojamiento = alojamientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado con ID: " + id));
@@ -74,16 +76,16 @@ public class AlojamientoService {
         alojamiento.setDescripcion(alojamientoDTO.getDescripcion());
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setImagenUrl(alojamientoDTO.getImagenUrl());
-        alojamiento.setCategorias(categorias);
+        alojamiento.setCategoria(categorias);
 
         return alojamientoRepository.save(alojamiento);
-
     }
 
-    public Optional<Alojamiento> obtenerAlojamientoPorId(Long id) {
+    public Optional<Alojamiento> getAlojamientoById(Long id) {
         return alojamientoRepository.findById(id);
     }
 
+    @Transactional
     public void eliminarAlojamientoPorId(Long id) {
         alojamientoRepository.deleteById(id);
     }

@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.flavioramses.huellitasbackend.model.Usuario;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +30,7 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        List<Usuario> usuarios = usuarioService.getAllUsuarios();
-        List<UsuarioDTO> usuarioDTOs = UsuarioDTO.toUserDTOList(usuarios);
-        return ResponseEntity.ok(usuarioDTOs);
+        return ResponseEntity.ok(UsuarioDTO.toUserDTOList(usuarioService.getAllUsuarios()));
     }
 
     @GetMapping("/{id}")
@@ -86,13 +83,9 @@ public class UsuarioController {
         return ResponseEntity.ok(UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role)));
     }
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> updateUsuario(
-            @PathVariable Long id,
-            @RequestBody UsuarioDTO usuarioDTO) throws ResourceNotFoundException {
-
-        Usuario usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);
-        return ResponseEntity.ok(UsuarioDTO.toUsuarioDTO(usuarioActualizado));
+    @PutMapping("/{usuarioId}/revocar-admin")
+    public ResponseEntity<String> removeAdminRole(@PathVariable Long usuarioId) {
+        usuarioService.removeAdminRole(usuarioId);
+        return ResponseEntity.ok("Permiso de administrador revocado correctamente.");
     }
 }
