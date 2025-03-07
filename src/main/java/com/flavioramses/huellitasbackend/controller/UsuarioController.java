@@ -6,7 +6,9 @@ import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +23,9 @@ public class UsuarioController {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    private EmailService emailService;
+
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
         return ResponseEntity.ok(UsuarioDTO.toUserDTOList(usuarioService.getAllUsuarios()));
@@ -30,6 +35,23 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(UsuarioDTO.toUsuarioDTO(usuarioService.getUsuarioById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario con id " + id + " no encontrado"))));
+    }
+    @GetMapping("/resend-confirmation-email/{email}")
+    public ResponseEntity<String> resendConfirmationEmail(@PathVariable String email) throws ResourceNotFoundException, BadRequestException {
+        Optional<Usuario> userOptional = Optional.ofNullable(usuarioService.getUsuarioByEmail(email));
+
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario con email "+email+" no encontrado");
+        }
+
+        Usuario user = userOptional.get();
+
+        try {
+            emailService.sendRegistrationConfirmation(user.getEmail(), user.getNombre());
+            return ResponseEntity.ok("Correo de confirmación reenviado exitosamente");
+        } catch (MessagingException e) {
+            throw new BadRequestException("Hubo un error al reenviar correo de registro");
+        }
     }
 
     @GetMapping("/rol/{id}")

@@ -10,12 +10,13 @@ import java.util.List;
 @Data
 @Table(name = "categorias")
 public class Categoria {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+    @Column(unique = true)
     private String nombre;
-    private String descripcion;
 
     @JsonIgnore
     @OneToMany(mappedBy = "categoria") // Agregado OneToMany
