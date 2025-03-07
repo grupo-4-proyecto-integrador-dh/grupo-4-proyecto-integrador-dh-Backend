@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.CategoriaService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,6 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-
     @GetMapping
     public List<Categoria> getAllCategorias() {
         return categoriaService.getAllCategorias();
@@ -31,23 +31,19 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> updateCategoria(@PathVariable Long id, @RequestBody Categoria categoria) throws BadRequestException {
-        try{
-            return ResponseEntity.ok(categoriaService.updateCategoria(id,categoria));
-        }catch (Exception e){
-            throw new BadRequestException("Ocurrio un error al actualizar la categoria");
+    public ResponseEntity<Categoria> updateCategoria(@PathVariable Long id, @RequestBody Categoria categoria) {
+        try {
+            return ResponseEntity.ok(categoriaService.updateCategoria(id, categoria));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> saveCategoria(@RequestBody Categoria categoria) throws BadRequestException {
-        Categoria categoriaGuardado = categoriaService.saveCategoria(categoria);
-        Optional<Categoria> categoriaById = categoriaService.getCategoriaById(categoria.getId());
-        if(categoriaById.isPresent()){
-            return ResponseEntity.ok(categoriaGuardado);
-        } else {
-            throw new BadRequestException("Hubo un error al agregar la categoria");
-        }
+    public ResponseEntity<Categoria> saveCategoria(@RequestBody Categoria categoria) {
+        return ResponseEntity.ok(categoriaService.saveCategoria(categoria));
     }
 
     @DeleteMapping("/{id}")
@@ -55,5 +51,4 @@ public class CategoriaController {
         categoriaService.deleteCategoriaById(id);
         return ResponseEntity.noContent().build();
     }
-
 }

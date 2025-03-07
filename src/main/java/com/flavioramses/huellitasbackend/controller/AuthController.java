@@ -1,11 +1,12 @@
 package com.flavioramses.huellitasbackend.controller;
 
+import com.flavioramses.huellitasbackend.Exception.EmailAlreadyExistsException;
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.dto.UsuarioLoginDTO;
 import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.security.JwtTokenProvider;
-import com.flavioramses.huellitasbackend.security.SecurityConfig;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
     @Autowired
     public AuthController(UsuarioService usuarioService, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         this.usuarioService = usuarioService;
@@ -40,9 +43,24 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody UsuarioRegistroDTO dto) {
         try {
             Usuario nuevoUsuario = usuarioService.registrarUsuario(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioDTO.toUsuarioDTO(nuevoUsuario));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            dto.getEmail(),
+                            dto.getContrasena()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtTokenProvider.generateToken(authentication);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("jwt", jwt);
+            response.put("usuario", UsuarioDTO.toUsuarioDTO(nuevoUsuario));
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (EmailAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al registrar el usuario");
         }
     }
 
@@ -68,7 +86,9 @@ public class AuthController {
             return ResponseEntity.ok(response);
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email u contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email o contraseña incorrectos");
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -18,6 +18,6 @@ public class Categoria {
     private String descripcion;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "categorias")
-    private List<Alojamiento> alojamiento;
+    @OneToMany(mappedBy = "categoria") // Agregado OneToMany
+    private List<Alojamiento> alojamientos;
 }
