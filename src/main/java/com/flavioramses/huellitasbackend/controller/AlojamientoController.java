@@ -2,9 +2,14 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.AlojamientoDashboardDTO;
+import com.flavioramses.huellitasbackend.dto.AlojamientoDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
+import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.AlojamientoService;
+import com.flavioramses.huellitasbackend.service.CategoriaService; // Agrega CategoriaService
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +24,23 @@ public class AlojamientoController {
     @Autowired
     public AlojamientoService alojamientoService;
 
+    @Autowired
+    public CategoriaService categoriaService; // Agrega CategoriaService
+
     @PostMapping
-    public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody Alojamiento alojamiento) throws BadRequestException {
-        Alojamiento alojamientoGuardado = alojamientoService.saveAlojamiento(alojamiento);
-        Optional<Alojamiento> alojamientoById = alojamientoService.getAlojamientoById(alojamiento.getId());
-        if(alojamientoById.isPresent()){
+    public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {
+        try {
+            // Validación de la categoría
+            if (alojamientoDTO.getCategoriaIds() == null) {
+                throw new BadRequestException("El ID de la categoría no puede ser nulo.");
+            }
+
+            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaIds());
+            if (!categoriaOptional.isPresent()) {
+                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds());
+            }
+
+            Alojamiento alojamientoGuardado = alojamientoService.crearAlojamiento(alojamientoDTO);
             return ResponseEntity.ok(alojamientoGuardado);
         } else {
             throw new BadRequestException("Hubo un error al registrar el alojamiento");
@@ -52,6 +69,21 @@ public class AlojamientoController {
           }catch (Exception e){
               throw new BadRequestException("Ocurrio un error al actualizar el alojamiento");
           }
+    public ResponseEntity<Alojamiento> updateAlojamiento(@PathVariable Long id, @RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {
+        try {
+            if (alojamientoDTO.getCategoriaIds() == null) {
+                throw new BadRequestException("El ID de la categoría no puede ser nulo.");
+            }
+
+            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaIds());
+            if (!categoriaOptional.isPresent()) {
+                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds());
+            }
+
+            return ResponseEntity.ok(alojamientoService.actualizarAlojamiento(id, alojamientoDTO));
+        } catch (ResourceNotFoundException | BadRequestException e) {
+            throw e;
+        }
     }
 
     @DeleteMapping("/{id}")

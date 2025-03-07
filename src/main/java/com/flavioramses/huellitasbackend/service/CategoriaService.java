@@ -1,8 +1,10 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,21 +26,25 @@ public class CategoriaService {
         return categoriaRepository.findById(id);
     }
 
-    public Categoria updateCategoria(Long id, Categoria categoriaNueva) {
-        Categoria categoria = categoriaRepository.findById(id).orElse(null);
-
-        if(categoria == null || categoriaNueva == null) return null;
-
-        categoria.setNombre(categoriaNueva.getNombre());
-        categoria.setDescripcion(categoriaNueva.getDescripcion());
-
-        return categoriaRepository.save(categoria);
+    @Transactional
+    public Categoria updateCategoria(Long id, Categoria categoriaNueva) throws ResourceNotFoundException {
+        return categoriaRepository.findById(id)
+                .map(categoria -> {
+                    if (categoriaNueva == null) {
+                        throw new IllegalArgumentException("La nueva categoría no puede ser nula.");
+                    }
+                    categoria.setNombre(categoriaNueva.getNombre());
+                    return categoriaRepository.save(categoria);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
     }
 
+    @Transactional
     public Categoria saveCategoria(Categoria categoria) {
         return categoriaRepository.save(categoria);
     }
 
+    @Transactional
     public void deleteCategoriaById(Long id) {
         categoriaRepository.deleteById(id);
     }

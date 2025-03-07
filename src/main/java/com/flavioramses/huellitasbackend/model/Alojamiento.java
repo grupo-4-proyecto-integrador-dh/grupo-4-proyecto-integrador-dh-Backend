@@ -27,15 +27,14 @@ public class Alojamiento {
     private String nombre;
     private String descripcion;
     private Double precio;
-    @ManyToMany
-    @JoinTable(
-            name = "alojamiento_categoria",
-            joinColumns = @JoinColumn(name = "alojamiento_id"),
-            inverseJoinColumns = @JoinColumn(name = "categoria_id")
-    )
-    private List<Categoria> categorias;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     @Column(name = "url_imagen")
-    private String imagenUrl;
+    private List<String> imagenUrl;
+
     @JsonIgnore
     @OneToMany(mappedBy = "alojamiento")
     private List<Reserva> reservas;
