@@ -6,7 +6,9 @@ import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.security.JwtTokenProvider;
 import com.flavioramses.huellitasbackend.security.SecurityConfig;
+import com.flavioramses.huellitasbackend.service.EmailService;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +37,19 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/registro")
     public ResponseEntity<?> register(@RequestBody UsuarioRegistroDTO dto) {
         try {
             Usuario nuevoUsuario = usuarioService.registrarUsuario(dto);
+            emailService.sendRegistrationConfirmation(nuevoUsuario.getEmail(), nuevoUsuario.getNombre());
             return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioDTO.toUsuarioDTO(nuevoUsuario));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
     }
 

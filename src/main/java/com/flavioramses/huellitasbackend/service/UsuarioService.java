@@ -35,6 +35,9 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findById(id);
     }
 
+    public Optional<Usuario> getUsuarioByEmail (String email) {
+        return usuarioRepository.findByEmail(email);
+    }
     public Usuario saveUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
