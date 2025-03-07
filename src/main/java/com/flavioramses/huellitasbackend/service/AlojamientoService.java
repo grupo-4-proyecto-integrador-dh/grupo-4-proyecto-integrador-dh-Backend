@@ -9,7 +9,6 @@ import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
 import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,70 +23,72 @@ public class AlojamientoService {
     @Autowired
     private AlojamientoRepository alojamientoRepository;
 
-    @Transactional
     public Alojamiento crearAlojamiento(AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException {
-        // Verifica si el ID de la categoría es nulo
-        if (alojamientoDTO.getCategoriaIds() == null) {
-            throw new ResourceNotFoundException("Debe proporcionar un ID de categoría");
+        // Verifica si la lista de categorías no está vacía
+        if (alojamientoDTO.getCategoriaIds().isEmpty()) {
+            throw new ResourceNotFoundException("Debe proporcionar al menos una categoría");
         }
 
-        // Obtiene la categoría por su ID
-        Categoria categoria = categoriaRepository.findById(alojamientoDTO.getCategoriaIds())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds()));
+        // Obtiene las categorías por sus IDs
+        List<Categoria> categorias = categoriaRepository.findAllById(alojamientoDTO.getCategoriaIds());
+        if (categorias.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron categorías con los IDs proporcionados");
+        }
 
-        // Crea el alojamiento
         Alojamiento alojamiento = new Alojamiento();
         alojamiento.setNombre(alojamientoDTO.getNombre());
         alojamiento.setDescripcion(alojamientoDTO.getDescripcion());
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setImagenUrl(alojamientoDTO.getImagenUrl());
-        alojamiento.setCategoria(categoria); // Asigna la categoría encontrada
+        alojamiento.setCategorias(categorias);
 
         return alojamientoRepository.save(alojamiento);
     }
 
-    public List<AlojamientoDashboardDTO> getAlojamientosDashboardDTO() {
+    public List<AlojamientoDashboardDTO> obtenerAlojamientosDashboardDTO() {
         List<Alojamiento> alojamientos = alojamientoRepository.findAll();
         return alojamientos.stream()
-                .map(this::convertToDashboardDTO)
+                .map(this::convertirADashboardDTO)
                 .collect(Collectors.toList());
     }
 
-    private AlojamientoDashboardDTO convertToDashboardDTO(Alojamiento alojamiento) {
+    private AlojamientoDashboardDTO convertirADashboardDTO(Alojamiento alojamiento) {
         return AlojamientoDashboardDTO.toAlojamientoDashboardDTO(alojamiento);
     }
 
-    @Transactional
     public Alojamiento actualizarAlojamiento(Long id, AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException {
-        // Busca el alojamiento por su ID
         Alojamiento alojamiento = alojamientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado con ID: " + id));
 
-        // Verifica si el ID de la categoría es nulo
-        if (alojamientoDTO.getCategoriaIds() == null) {
-            throw new ResourceNotFoundException("Debe proporcionar un ID de categoría");
+        if (alojamientoDTO.getCategoriaIds().isEmpty()) {
+            throw new ResourceNotFoundException("Debe proporcionar al menos una categoría");
         }
 
-        // Obtiene la categoría por su ID
-        Categoria categoria = categoriaRepository.findById(alojamientoDTO.getCategoriaIds())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds()));
+        // Obtiene las categorías por sus IDs
+        Categoria categorias = categoriaRepository.findAllById(alojamientoDTO.getCategoriaIds());
+        if (categorias.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron categorías con los IDs proporcionados");
+        }
 
-        // Actualiza los campos del alojamiento
         alojamiento.setNombre(alojamientoDTO.getNombre());
         alojamiento.setDescripcion(alojamientoDTO.getDescripcion());
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setImagenUrl(alojamientoDTO.getImagenUrl());
-        alojamiento.setCategoria(categoria); // Asigna la categoría encontrada
+        alojamiento.setCategorias(categorias);
 
         return alojamientoRepository.save(alojamiento);
 
     }
 
-    public Optional<Alojamiento> getAlojamientoById (Long id) {
+    public Optional<Alojamiento> obtenerAlojamientoPorId(Long id) {
         return alojamientoRepository.findById(id);
     }
 
-    public void deleteAlojamientoById(Long id) {
+    public void eliminarAlojamientoPorId(Long id) {
         alojamientoRepository.deleteById(id);
+    }
+
+    public List<Alojamiento> getAllAlojamientos() {
+        return alojamientoRepository.findAll();
     }
 }

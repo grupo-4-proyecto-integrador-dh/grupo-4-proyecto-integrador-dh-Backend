@@ -42,42 +42,39 @@ public class AlojamientoController {
 
             Alojamiento alojamientoGuardado = alojamientoService.crearAlojamiento(alojamientoDTO);
             return ResponseEntity.ok(alojamientoGuardado);
-        } else {
-            throw new BadRequestException("Hubo un error al registrar el alojamiento");
+        } catch (ResourceNotFoundException | BadRequestException e) {
+            throw e;
         }
     }
 
     @GetMapping
     public ResponseEntity<List<Alojamiento>> getAllAlojamientos() {
-        return ResponseEntity.status(200).body(alojamientoService.getAllAlojamientos());
+        return ResponseEntity.ok(alojamientoService.getAllAlojamientos());
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<List<AlojamientoDashboardDTO>> getAllAlojamientosForDashboard() {
+        List<AlojamientoDashboardDTO> alojamientos = alojamientoService.getAlojamientosDashboardDTO();
+        return ResponseEntity.ok(alojamientos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Alojamiento>> getAlojamientoById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        Optional<Alojamiento> alojamientoBuscado = alojamientoService.getAlojamientoById(id);
-        if(alojamientoBuscado.isPresent()){
-            return ResponseEntity.ok(alojamientoBuscado);
-        }else{
-            throw new ResourceNotFoundException("Alojamiento no encontrado");
-        }
+    public ResponseEntity<Alojamiento> getAlojamientoById(@PathVariable("id") Long id) throws ResourceNotFoundException {
+        Alojamiento alojamientoBuscado = alojamientoService.get(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado"));
+        return ResponseEntity.ok(alojamientoBuscado);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Alojamiento> updateAlojamiento(@PathVariable Long id, @RequestBody Alojamiento alojamiento) throws BadRequestException {
-          try{
-              return ResponseEntity.ok(alojamientoService.updateAlojamiento(id, alojamiento));
-          }catch (Exception e){
-              throw new BadRequestException("Ocurrio un error al actualizar el alojamiento");
-          }
     public ResponseEntity<Alojamiento> updateAlojamiento(@PathVariable Long id, @RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {
         try {
-            if (alojamientoDTO.getCategoriaIds() == null) {
+            if (alojamientoDTO.getCategoriaId() == null) {
                 throw new BadRequestException("El ID de la categoría no puede ser nulo.");
             }
 
-            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaIds());
+            Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaId());
             if (!categoriaOptional.isPresent()) {
-                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaIds());
+                throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaId());
             }
 
             return ResponseEntity.ok(alojamientoService.actualizarAlojamiento(id, alojamientoDTO));
@@ -88,7 +85,7 @@ public class AlojamientoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlojamientoById(@PathVariable("id") Long id) {
-        alojamientoService.deleteAlojamientoById(id);
-        return ResponseEntity.status(204).build();
+        alojamientoService.eliminarAlojamientoPorId(id);
+        return ResponseEntity.noContent().build();
     }
 }
