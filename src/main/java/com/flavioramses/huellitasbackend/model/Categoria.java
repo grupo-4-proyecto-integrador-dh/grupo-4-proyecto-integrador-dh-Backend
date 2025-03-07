@@ -1,23 +1,24 @@
 package com.flavioramses.huellitasbackend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
-@Entity
 @Data
+@Entity
 @Table(name = "categorias")
 public class Categoria {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String nombre;
-    private String descripcion;
 
-    @JsonIgnore
+    @Column(unique = true)
+    private String nombre;
+
     @ManyToMany(mappedBy = "categorias")
-    private List<Alojamiento> alojamiento;
+    @JsonBackReference // Evita recursión infinita al serializar a JSON
+    private List<Alojamiento> alojamientos;
 }

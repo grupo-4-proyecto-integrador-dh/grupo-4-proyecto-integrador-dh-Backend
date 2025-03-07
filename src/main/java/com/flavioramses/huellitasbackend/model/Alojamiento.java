@@ -28,12 +28,14 @@ public class Alojamiento {
     private String descripcion;
     private Double precio;
 
+
     @ManyToMany
     @JoinTable(
             name = "alojamiento_categoria",
             joinColumns = @JoinColumn(name = "alojamiento_id"),
             inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
+    @JsonManagedReference
     private List<Categoria> categorias;
 
     @Column(name = "url_imagen")

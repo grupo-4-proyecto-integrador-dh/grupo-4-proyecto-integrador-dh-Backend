@@ -24,15 +24,23 @@ public class AlojamientoService {
     private AlojamientoRepository alojamientoRepository;
 
     public Alojamiento crearAlojamiento(AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException {
-        Categoria categoria = categoriaRepository.findById(alojamientoDTO.getCategoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaId()));
+        // Verifica si la lista de categorías no está vacía
+        if (alojamientoDTO.getCategoriaIds().isEmpty()) {
+            throw new ResourceNotFoundException("Debe proporcionar al menos una categoría");
+        }
+
+        // Obtiene las categorías por sus IDs
+        List<Categoria> categorias = categoriaRepository.findAllById(alojamientoDTO.getCategoriaIds());
+        if (categorias.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron categorías con los IDs proporcionados");
+        }
 
         Alojamiento alojamiento = new Alojamiento();
         alojamiento.setNombre(alojamientoDTO.getNombre());
         alojamiento.setDescripcion(alojamientoDTO.getDescripcion());
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setImagenUrl(alojamientoDTO.getImagenUrl());
-        alojamiento.setCategoria(categoria);
+        alojamiento.setCategorias(categorias);
 
         return alojamientoRepository.save(alojamiento);
     }
@@ -52,14 +60,21 @@ public class AlojamientoService {
         Alojamiento alojamiento = alojamientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado con ID: " + id));
 
-        Categoria categoria = categoriaRepository.findById(alojamientoDTO.getCategoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaId()));
+        if (alojamientoDTO.getCategoriaIds().isEmpty()) {
+            throw new ResourceNotFoundException("Debe proporcionar al menos una categoría");
+        }
+
+        // Obtiene las categorías por sus IDs
+        List<Categoria> categorias = categoriaRepository.findAllById(alojamientoDTO.getCategoriaIds());
+        if (categorias.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron categorías con los IDs proporcionados");
+        }
 
         alojamiento.setNombre(alojamientoDTO.getNombre());
         alojamiento.setDescripcion(alojamientoDTO.getDescripcion());
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setImagenUrl(alojamientoDTO.getImagenUrl());
-        alojamiento.setCategoria(categoria);
+        alojamiento.setCategorias(categorias);
 
         return alojamientoRepository.save(alojamiento);
 

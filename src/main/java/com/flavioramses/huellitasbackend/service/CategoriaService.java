@@ -30,7 +30,6 @@ public class CategoriaService {
         if(categoria == null || categoriaNueva == null) return null;
 
         categoria.setNombre(categoriaNueva.getNombre());
-        categoria.setDescripcion(categoriaNueva.getDescripcion());
 
         return categoriaRepository.save(categoria);
     }

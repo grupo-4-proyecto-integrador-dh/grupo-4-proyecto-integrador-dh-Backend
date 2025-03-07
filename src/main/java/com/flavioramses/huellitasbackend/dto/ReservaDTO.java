@@ -20,20 +20,13 @@ public class ReservaDTO {
     private String alojamientoNombre;
     private Long alojamientoId;
     private Double alojamientoPrecio;
-    private List<String> categoriaNombre;
+    private List<String> categoriaNombre; // Lista de nombres de categorías
 
     private String clienteNombre;
     private String clienteApellido;
     private String clienteEmail;
 
     public ReservaDTO(Reserva reserva) {
-
-        List<String> categorias = reserva.getAlojamiento()
-                .getCategorias()
-                .stream()
-                .map(Categoria::getNombre)
-                .collect(Collectors.toList());
-
         this.id = reserva.getId();
         this.fechaDesde = reserva.getFechaDesde().toString();
         this.fechaHasta = reserva.getFechaHasta().toString();
@@ -44,13 +37,20 @@ public class ReservaDTO {
         this.alojamientoNombre = reserva.getAlojamiento().getNombre();
         this.alojamientoId = reserva.getAlojamiento().getId();
         this.alojamientoPrecio = reserva.getAlojamiento().getPrecio();
-        this.categoriaNombre = reserva.getAlojamiento().getCategoria().getNombre(); // Obtiene el nombre de la categoría
+
+        // Obtener los nombres de las categorías
+        this.categoriaNombre = reserva.getAlojamiento()
+                .getCategorias()
+                .stream()
+                .map(categoria -> categoria.getNombre()) // Obtener el nombre de cada categoría
+                .collect(Collectors.toList());
+
         this.clienteNombre = reserva.getCliente().getUsuario().getNombre();
         this.clienteApellido = reserva.getCliente().getUsuario().getApellido();
         this.clienteEmail = reserva.getCliente().getUsuario().getEmail();
     }
 
-    public static ReservaDTO toReservaDTO(Reserva reserva){
+    public static ReservaDTO toReservaDTO(Reserva reserva) {
         return new ReservaDTO(reserva);
     }
 
