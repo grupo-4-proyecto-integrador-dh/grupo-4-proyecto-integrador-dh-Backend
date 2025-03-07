@@ -1,6 +1,8 @@
 package com.flavioramses.huellitasbackend.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,9 +28,13 @@ public class Alojamiento {
     private String descripcion;
     private Double precio;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    @ManyToMany
+    @JoinTable(
+            name = "alojamiento_categoria",
+            joinColumns = @JoinColumn(name = "alojamiento_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private List<Categoria> categorias;
 
     @Column(name = "url_imagen")
     private String imagenUrl;

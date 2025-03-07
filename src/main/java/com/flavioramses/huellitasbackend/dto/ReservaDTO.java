@@ -20,13 +20,20 @@ public class ReservaDTO {
     private String alojamientoNombre;
     private Long alojamientoId;
     private Double alojamientoPrecio;
-    private String categoriaNombre; // Cambiado a String para una sola categoría
+    private List<String> categoriaNombre;
 
     private String clienteNombre;
     private String clienteApellido;
     private String clienteEmail;
 
     public ReservaDTO(Reserva reserva) {
+
+        List<String> categorias = reserva.getAlojamiento()
+                .getCategorias()
+                .stream()
+                .map(Categoria::getNombre)
+                .collect(Collectors.toList());
+
         this.id = reserva.getId();
         this.fechaDesde = reserva.getFechaDesde().toString();
         this.fechaHasta = reserva.getFechaHasta().toString();

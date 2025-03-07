@@ -62,6 +62,7 @@ public class AlojamientoService {
         alojamiento.setCategoria(categoria);
 
         return alojamientoRepository.save(alojamiento);
+
     }
 
     public Optional<Alojamiento> obtenerAlojamientoPorId(Long id) {
