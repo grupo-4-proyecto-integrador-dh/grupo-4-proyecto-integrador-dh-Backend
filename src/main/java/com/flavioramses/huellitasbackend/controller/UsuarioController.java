@@ -46,7 +46,7 @@ public class UsuarioController {
     }
     @GetMapping("/resend-confirmation-email/{email}")
     public ResponseEntity<String> resendConfirmationEmail(@PathVariable String email) throws ResourceNotFoundException, BadRequestException {
-        Optional<Usuario> userOptional = usuarioService.getUsuarioByEmail(email);
+        Optional<Usuario> userOptional = Optional.ofNullable(usuarioService.getUsuarioByEmail(email));
 
         if (userOptional.isEmpty()) {
             throw new ResourceNotFoundException("Usuario con email "+email+" no encontrado");
