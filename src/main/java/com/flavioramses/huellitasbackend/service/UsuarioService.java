@@ -75,7 +75,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setEmail(registroDTO.getEmail());
 
         usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
-        usuario.setRol(RolUsuario.ADMIN);
+        usuario.setRol(RolUsuario.USER);
 
         return usuarioRepository.save(usuario);
     }

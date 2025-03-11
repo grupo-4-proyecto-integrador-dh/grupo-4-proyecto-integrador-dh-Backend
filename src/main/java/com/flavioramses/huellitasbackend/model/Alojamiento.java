@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +31,9 @@ public class Alojamiento {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @Column(name = "url_imagen")
-    private List<String> imagenUrl;
+    @OneToMany(mappedBy = "alojamiento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ImagenAlojamiento> imagenes;
 
     @JsonIgnore
     @OneToMany(mappedBy = "alojamiento")

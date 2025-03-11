@@ -34,6 +34,7 @@ public class CategoriaService {
                         throw new IllegalArgumentException("La nueva categoría no puede ser nula.");
                     }
                     categoria.setNombre(categoriaNueva.getNombre());
+                    categoria.setDescripcion(categoriaNueva.getDescripcion());
                     return categoriaRepository.save(categoria);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
