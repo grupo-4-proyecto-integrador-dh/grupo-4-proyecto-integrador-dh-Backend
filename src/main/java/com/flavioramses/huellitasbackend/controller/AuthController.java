@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.flavioramses.huellitasbackend.service.EmailService;
+import jakarta.mail.MessagingException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +42,9 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping("/registro")
     public ResponseEntity<?> register(@RequestBody UsuarioRegistroDTO dto) {
         try {
@@ -54,6 +60,7 @@ public class AuthController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("jwt", jwt);
+            emailService.sendRegistrationConfirmation(nuevoUsuario.getEmail(), nuevoUsuario.getNombre());
             response.put("usuario", UsuarioDTO.toUsuarioDTO(nuevoUsuario));
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
