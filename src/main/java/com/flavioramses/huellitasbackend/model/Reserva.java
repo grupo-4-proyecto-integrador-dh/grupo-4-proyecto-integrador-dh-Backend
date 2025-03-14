@@ -26,6 +26,4 @@ public class Reserva {
 
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
-    private LocalTime horaDesde;
-    private LocalTime horaHasta;
 }

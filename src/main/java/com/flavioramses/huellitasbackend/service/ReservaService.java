@@ -35,8 +35,6 @@ public class ReservaService {
 
         reserva.setFechaDesde(reservaNueva.getFechaDesde());
         reserva.setFechaHasta(reservaNueva.getFechaHasta());
-        reserva.setHoraDesde(reservaNueva.getHoraDesde());
-        reserva.setHoraHasta(reservaNueva.getHoraHasta());
         // TODO: actualizar campos basado en la lógica, por ahora solo la fecha y hora
 
         return reservaRepository.save(reserva);

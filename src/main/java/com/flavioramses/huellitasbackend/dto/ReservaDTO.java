@@ -29,9 +29,7 @@ public class ReservaDTO {
     public ReservaDTO(Reserva reserva) {
         this.id = reserva.getId();
         this.fechaDesde = reserva.getFechaDesde().toString();
-        this.fechaHasta = reserva.getFechaHasta().toString();
-        this.horaDesde = reserva.getHoraDesde().toString();
-        this.horaHasta = reserva.getHoraHasta().toString();
+        this.fechaHasta = reserva.getFechaHasta().toString(); 
         this.mascotaNombre = reserva.getMascota().getNombre();
         this.mascotaId = reserva.getMascota().getId();
         this.alojamientoNombre = reserva.getAlojamiento().getNombre();
