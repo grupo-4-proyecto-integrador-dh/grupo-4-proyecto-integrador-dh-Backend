@@ -4,8 +4,10 @@ import com.flavioramses.huellitasbackend.Exception.EmailAlreadyExistsException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
+import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
+import com.flavioramses.huellitasbackend.repository.ClienteRepository;
 import com.flavioramses.huellitasbackend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +29,14 @@ import java.util.stream.Collectors;
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
+    private final ClienteRepository clienteRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, ClienteRepository clienteRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.clienteRepository = clienteRepository;
     }
 
     public List<Usuario> getAllUsuarios() {
@@ -76,8 +80,13 @@ public class UsuarioService implements UserDetailsService {
 
         usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
         usuario.setRol(RolUsuario.USER);
+        usuario = usuarioRepository.save(usuario);
 
-        return usuarioRepository.save(usuario);
+        Cliente cliente = new Cliente();
+        cliente.setUsuario(usuario);
+        clienteRepository.save(cliente);
+
+        return usuario;
     }
 
     @Transactional
