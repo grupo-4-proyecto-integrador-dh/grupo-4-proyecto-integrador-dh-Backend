@@ -48,11 +48,15 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Token inválido o expirado", e);
+        }
     }
 
     private boolean isTokenExpired(String token) {
