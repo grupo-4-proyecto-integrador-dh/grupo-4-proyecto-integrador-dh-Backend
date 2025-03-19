@@ -1,9 +1,12 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.Mascota;
+import com.flavioramses.huellitasbackend.repository.ClienteRepository;
 import com.flavioramses.huellitasbackend.repository.MascotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +15,9 @@ import java.util.Optional;
 public class MascotaService {
 
     private final MascotaRepository mascotaRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     @Autowired
     public MascotaService(MascotaRepository mascotaRepository) {
@@ -38,6 +44,11 @@ public class MascotaService {
     }
 
     public Mascota saveMascota(Mascota mascota) {
+        // Verificar si el cliente existe antes de asignarlo
+        Cliente cliente = clienteRepository.findById(mascota.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        mascota.setCliente(cliente); // Asignar el cliente gestionado por Hibernate
         return mascotaRepository.save(mascota);
     }
 

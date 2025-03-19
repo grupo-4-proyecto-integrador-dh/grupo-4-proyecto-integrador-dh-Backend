@@ -23,7 +23,8 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "id", nullable = false)
     private Cliente cliente;
-
+    @Column(name = "fecha_desde")
     private LocalDate fechaDesde;
+    @Column(name = "fecha_hasta")
     private LocalDate fechaHasta;
 }

@@ -11,8 +11,6 @@ public class ReservaDTO {
     private Long id;
     private String fechaDesde;
     private String fechaHasta;
-    private String horaDesde;
-    private String horaHasta;
 
     private String mascotaNombre;
     private Long mascotaId;
@@ -20,7 +18,7 @@ public class ReservaDTO {
     private String alojamientoNombre;
     private Long alojamientoId;
     private Double alojamientoPrecio;
-    private String categoriaNombre; // Cambiado a String para una sola categoría
+    //private String categoriaNombre; // Cambiado a String para una sola categoría
 
     private String clienteNombre;
     private String clienteApellido;
@@ -35,7 +33,7 @@ public class ReservaDTO {
         this.alojamientoNombre = reserva.getAlojamiento().getNombre();
         this.alojamientoId = reserva.getAlojamiento().getId();
         this.alojamientoPrecio = reserva.getAlojamiento().getPrecio();
-        this.categoriaNombre = reserva.getAlojamiento().getCategoria().getNombre(); // Obtiene el nombre de la categoría
+        //this.categoriaNombre = reserva.getAlojamiento().getCategoria().getNombre(); // Obtiene el nombre de la categoría
         this.clienteNombre = reserva.getCliente().getUsuario().getNombre();
         this.clienteApellido = reserva.getCliente().getUsuario().getApellido();
         this.clienteEmail = reserva.getCliente().getUsuario().getEmail();
