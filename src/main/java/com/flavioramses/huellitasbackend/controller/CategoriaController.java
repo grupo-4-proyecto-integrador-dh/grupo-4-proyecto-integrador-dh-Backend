@@ -1,6 +1,5 @@
 package com.flavioramses.huellitasbackend.controller;
 
-import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.CategoriaService;
@@ -37,7 +36,7 @@ public class CategoriaController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -50,5 +49,15 @@ public class CategoriaController {
     public ResponseEntity<Void> deleteCategoriaById(@PathVariable Long id) {
         categoriaService.deleteCategoriaById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/imagen-url")
+    public ResponseEntity<String> updateImagenUrl(@PathVariable Long id, @RequestBody String imageUrl) {
+        try {
+            Categoria categoriaActualizada = categoriaService.updateCategoriaImagen(id, imageUrl);
+            return ResponseEntity.ok(imageUrl);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
