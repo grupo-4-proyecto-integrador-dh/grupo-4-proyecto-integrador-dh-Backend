@@ -2,10 +2,12 @@ package com.flavioramses.huellitasbackend.dto;
 
 import com.flavioramses.huellitasbackend.model.Mascota;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 @Data
 public class MascotaDTO {
     private Long id;
