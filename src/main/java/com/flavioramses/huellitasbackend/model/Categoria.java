@@ -16,8 +16,9 @@ public class Categoria {
     @Column(nullable = false)
     private String nombre;
     private String descripcion;
+    private String imagenUrl;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "categoria") // Agregado OneToMany
+    @OneToMany(mappedBy = "categoria")
     private List<Alojamiento> alojamientos;
 }
