@@ -35,6 +35,7 @@ public class CategoriaService {
                     }
                     categoria.setNombre(categoriaNueva.getNombre());
                     categoria.setDescripcion(categoriaNueva.getDescripcion());
+                    categoria.setImagenUrl(categoriaNueva.getImagenUrl()); // Permite actualizar la URL de la imagen
                     return categoriaRepository.save(categoria);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
@@ -48,5 +49,15 @@ public class CategoriaService {
     @Transactional
     public void deleteCategoriaById(Long id) {
         categoriaRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Categoria updateCategoriaImagen(Long id, String imagenUrl) throws ResourceNotFoundException {
+        return categoriaRepository.findById(id)
+                .map(categoria -> {
+                    categoria.setImagenUrl(imagenUrl);
+                    return categoriaRepository.save(categoria);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
     }
 }
