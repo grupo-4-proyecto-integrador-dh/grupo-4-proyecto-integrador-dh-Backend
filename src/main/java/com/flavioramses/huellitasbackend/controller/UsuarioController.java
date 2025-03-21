@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "https://frontend-huellitas-fuum.vercel.app")
 @RequestMapping(path = "/usuarios")
 public class UsuarioController {
 

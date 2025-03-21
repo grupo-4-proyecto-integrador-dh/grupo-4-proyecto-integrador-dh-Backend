@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://frontend-huellitas-fuum.vercel.app")
 @RequestMapping(path = "reservas")
 public class ReservaController {
 

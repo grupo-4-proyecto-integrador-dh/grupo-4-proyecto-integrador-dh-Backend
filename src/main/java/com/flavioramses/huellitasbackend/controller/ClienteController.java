@@ -13,7 +13,6 @@ import java.util.Optional;
 
 
 @RestController
-@CrossOrigin(origins = "https://frontend-huellitas-fuum.vercel.app")
 @RequestMapping(path = "clientes")
 public class ClienteController {
     private final ClienteService clienteService;
