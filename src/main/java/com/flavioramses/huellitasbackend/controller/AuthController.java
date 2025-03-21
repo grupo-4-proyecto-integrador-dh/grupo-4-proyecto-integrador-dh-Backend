@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "https://frontend-huellitas-fuum.vercel.app")
 @RequestMapping("/api/auth")
 public class AuthController {
 
