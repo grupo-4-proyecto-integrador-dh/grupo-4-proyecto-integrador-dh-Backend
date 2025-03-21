@@ -1,5 +1,6 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.model.Reserva;
@@ -59,27 +60,30 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-    public Reserva saveReserva(Reserva reserva) {
-        if (reserva == null) {
+    public Reserva saveReserva(ReservaNuevaDTO reservaDTO) {
+        if (reservaDTO == null) {
             throw new IllegalArgumentException("La reserva no puede ser nula");
         }
 
         // Buscar cliente en la base de datos
-        Cliente cliente = clienteRepository.findById(reserva.getCliente().getId())
+        Cliente cliente = clienteRepository.findById(reservaDTO.getClienteId())
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado"));
 
         // Buscar alojamiento en la base de datos
-        Alojamiento alojamiento = alojamientoRepository.findById(reserva.getAlojamiento().getId())
+        Alojamiento alojamiento = alojamientoRepository.findById(reservaDTO.getAlojamientoId())
                 .orElseThrow(() -> new IllegalArgumentException("Alojamiento no encontrado"));
 
         // Buscar mascota en la base de datos
-        Mascota mascota = mascotaRepository.findById(reserva.getMascota().getId())
+        Mascota mascota = mascotaRepository.findById(reservaDTO.getMascotaId())
                 .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
-        // Asignar las entidades existentes a la reserva
+        // Crear la reserva
+        Reserva reserva = new Reserva();
         reserva.setCliente(cliente);
         reserva.setAlojamiento(alojamiento);
         reserva.setMascota(mascota);
+        reserva.setFechaDesde(reservaDTO.getFechaDesde());
+        reserva.setFechaHasta(reservaDTO.getFechaHasta());
 
         return reservaRepository.save(reserva);
     }

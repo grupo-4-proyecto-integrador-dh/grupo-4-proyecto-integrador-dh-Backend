@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -37,5 +38,6 @@ public class Alojamiento {
 
     @JsonIgnore
     @OneToMany(mappedBy = "alojamiento")
-    private List<Reserva> reservas;
+    @Builder.Default
+    private List<Reserva> reservas = new ArrayList<>();
 }

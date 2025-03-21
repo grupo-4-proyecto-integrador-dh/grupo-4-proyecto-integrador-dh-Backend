@@ -3,9 +3,11 @@ package com.flavioramses.huellitasbackend.service;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.AlojamientoDashboardDTO;
 import com.flavioramses.huellitasbackend.dto.AlojamientoDTO;
+import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.model.ImagenAlojamiento;
+import com.flavioramses.huellitasbackend.model.Reserva;
 import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
 import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
 import com.flavioramses.huellitasbackend.repository.ImagenAlojamientoRepository;
@@ -56,6 +58,7 @@ public class AlojamientoService {
                 .collect(Collectors.toList());
     }
 
+
     private AlojamientoDashboardDTO convertToDashboardDTO(Alojamiento alojamiento) {
         return AlojamientoDashboardDTO.toAlojamientoDashboardDTO(alojamiento);
     }
@@ -86,8 +89,38 @@ public class AlojamientoService {
         return alojamientoRepository.save(alojamiento);
     }
 
-    public Optional<Alojamiento> getAlojamientoById(Long id) {
-        return alojamientoRepository.findById(id);
+    public AlojamientoDTO getAlojamientoById(Long id) throws ResourceNotFoundException {
+        Alojamiento alojamiento = alojamientoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado con ID: " + id));
+
+        return mapToDTO(alojamiento);
+    }
+
+    private AlojamientoDTO mapToDTO(Alojamiento alojamiento) {
+        AlojamientoDTO dto = new AlojamientoDTO();
+        dto.setId(alojamiento.getId());
+        dto.setNombre(alojamiento.getNombre());
+        dto.setDescripcion(alojamiento.getDescripcion());
+        dto.setPrecio(alojamiento.getPrecio());
+        if (alojamiento.getCategoria() != null) {
+            dto.setCategoriaId(alojamiento.getCategoria().getId());
+        } else {
+            dto.setCategoriaId(null); // O algún valor por defecto
+        }
+
+        // Mapear las imágenes
+        List<String> imagenesUrl = alojamiento.getImagenes().stream()
+                .map(ImagenAlojamiento::getUrlImagen)
+                .collect(Collectors.toList());
+        dto.setImagenesUrl(imagenesUrl);
+
+        // Mapear las reservas
+        List<ReservaDTO> reservasDTO = alojamiento.getReservas().stream()
+                .map(ReservaDTO::toReservaDTO) // Usa el método estático de ReservaDTO
+                .collect(Collectors.toList());
+        dto.setReservas(reservasDTO);
+
+        return dto;
     }
 
     @Transactional

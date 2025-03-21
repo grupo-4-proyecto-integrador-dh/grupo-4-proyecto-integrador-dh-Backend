@@ -5,6 +5,7 @@ import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.ClienteDTO;
 import com.flavioramses.huellitasbackend.dto.MascotaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
+import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Reserva;
 import com.flavioramses.huellitasbackend.service.ReservaService;
@@ -26,9 +27,13 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservaDTO> saveReserva(@RequestBody Reserva reserva) throws BadRequestException {
-        Reserva reservaGuardado = reservaService.saveReserva(reserva);
-        return ResponseEntity.ok(ReservaDTO.toReservaDTO(reservaGuardado));
+    public ResponseEntity<ReservaNuevaDTO> saveReserva(@RequestBody ReservaNuevaDTO reservaDTO) throws BadRequestException {
+        if (reservaDTO.getClienteId() == null || reservaDTO.getAlojamientoId() == null || reservaDTO.getMascotaId() == null) {
+            throw new IllegalArgumentException("Faltan datos obligatorios en la reserva.");
+        }
+
+        Reserva reservaGuardada = reservaService.saveReserva(reservaDTO);
+        return ResponseEntity.ok(ReservaNuevaDTO.toReservaDTO(reservaGuardada));
     }
 
     @GetMapping

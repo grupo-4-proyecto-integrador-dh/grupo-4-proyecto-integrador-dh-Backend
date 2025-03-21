@@ -9,6 +9,7 @@ import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.AlojamientoService;
 import com.flavioramses.huellitasbackend.service.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,10 +58,13 @@ public class AlojamientoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Alojamiento> getAlojamientoById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        Alojamiento alojamientoBuscado = alojamientoService.getAlojamientoById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado"));
-        return ResponseEntity.ok(alojamientoBuscado);
+    public ResponseEntity<AlojamientoDTO> getAlojamientoById(@PathVariable Long id) {
+        try {
+            AlojamientoDTO alojamientoDTO = alojamientoService.getAlojamientoById(id);
+            return ResponseEntity.ok(alojamientoDTO);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PutMapping("/{id}")
