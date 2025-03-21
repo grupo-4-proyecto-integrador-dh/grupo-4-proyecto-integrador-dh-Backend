@@ -50,13 +50,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("https://frontend-huellitas-fuum.vercel.app")); // Orígenes permitidos
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
         configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
         configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
         return source;
+
     }
 
     @Bean
