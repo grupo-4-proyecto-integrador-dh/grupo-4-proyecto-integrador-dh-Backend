@@ -50,7 +50,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app, http://localhost:5173")); // Orígenes permitidos
+        configuration.setAllowedOrigins(Arrays.asList("https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app")); // Orígenes permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
         configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
         configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
