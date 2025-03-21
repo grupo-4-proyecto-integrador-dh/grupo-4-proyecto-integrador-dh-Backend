@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers("/reservas/**").permitAll()
                         .requestMatchers("/mascotas/**").permitAll()
+                        .requestMatchers("/clientes/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuarios/{usuarioId}/rol/{role}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         .anyRequest().authenticated()
