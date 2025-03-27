@@ -50,18 +50,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
+        configuration.setAllowedOriginPatterns(Arrays.asList(
                 "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
-                "http://localhost:5173"  // Agregado para desarrollo local
-        ));// Orígenes permitidos
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
-        configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
-        configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
+                "http://localhost:*",   // Permitirá cualquier puerto en localhost
+                "http://127.0.0.1:*"    // Para IPv4 también
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
+        source.registerCorsConfiguration("/**", configuration);
         return source;
-
     }
 
     @Bean
