@@ -3,6 +3,7 @@ package com.flavioramses.huellitasbackend.controller;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.CategoriaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "categorias")
 public class CategoriaController {
-
+    @Autowired
     private final CategoriaService categoriaService;
 
     public CategoriaController(CategoriaService categoriaService) {

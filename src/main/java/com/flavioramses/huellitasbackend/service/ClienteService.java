@@ -2,6 +2,7 @@ package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class ClienteService {
-
+    @Autowired
     private final ClienteRepository clienteRepository;
 
     public ClienteService(ClienteRepository clienteRepository) {
@@ -30,7 +31,7 @@ public class ClienteService {
         if(cliente == null || clienteNuevo == null) return null;
 
         cliente.setNumeroTelefono(clienteNuevo.getNumeroTelefono());
-        // TODO: Setear campos cliente excepto usuario y reservas
+
 
         return clienteRepository.save(clienteNuevo);
     }

@@ -13,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,7 +31,6 @@ public class AlojamientoController {
     @PostMapping
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {
         try {
-            // Validación de la categoría
             if (alojamientoDTO.getCategoriaId() == null) {
                 throw new BadRequestException("El ID de la categoría no puede ser nulo.");
             }
@@ -75,7 +76,7 @@ public class AlojamientoController {
             }
 
             Optional<Categoria> categoriaOptional = categoriaService.getCategoriaById(alojamientoDTO.getCategoriaId());
-            if (!categoriaOptional.isPresent()) {
+            if (categoriaOptional.isEmpty()) {
                 throw new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoDTO.getCategoriaId());
             }
 
@@ -90,4 +91,5 @@ public class AlojamientoController {
         alojamientoService.eliminarAlojamientoPorId(id);
         return ResponseEntity.noContent().build();
     }
+
 }

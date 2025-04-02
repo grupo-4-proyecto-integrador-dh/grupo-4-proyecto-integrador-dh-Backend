@@ -3,6 +3,7 @@ package com.flavioramses.huellitasbackend.service;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 @Service
 public class CategoriaService {
-
+    @Autowired
     private final CategoriaRepository categoriaRepository;
 
     public CategoriaService(CategoriaRepository categoriaRepository) {
@@ -35,7 +36,7 @@ public class CategoriaService {
                     }
                     categoria.setNombre(categoriaNueva.getNombre());
                     categoria.setDescripcion(categoriaNueva.getDescripcion());
-                    categoria.setImagenUrl(categoriaNueva.getImagenUrl()); // Permite actualizar la URL de la imagen
+                    categoria.setImagenUrl(categoriaNueva.getImagenUrl());
                     return categoriaRepository.save(categoria);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));

@@ -58,14 +58,6 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/roles/{role}")
-    public ResponseEntity<List<UsuarioDTO>> getUsuariosByRole(@PathVariable RolUsuario role) throws BadRequestException {
-        if (role != RolUsuario.ADMIN && role != RolUsuario.USER) {
-            throw new BadRequestException("Rol no válido");
-        }
-        return ResponseEntity.ok(UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role)));
-    }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioDTO> updateUsuario(

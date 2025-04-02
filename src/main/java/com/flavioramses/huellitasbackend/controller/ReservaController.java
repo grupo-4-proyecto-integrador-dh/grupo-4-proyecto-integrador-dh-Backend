@@ -2,101 +2,179 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
-import com.flavioramses.huellitasbackend.dto.ClienteDTO;
-import com.flavioramses.huellitasbackend.dto.MascotaDTO;
+import com.flavioramses.huellitasbackend.Exception.UnauthorizedException;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
-import com.flavioramses.huellitasbackend.model.Alojamiento;
-import com.flavioramses.huellitasbackend.model.Reserva;
+import com.flavioramses.huellitasbackend.model.EstadoReserva;
 import com.flavioramses.huellitasbackend.service.ReservaService;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de reservas de alojamientos.
+ */
 @RestController
-@RequestMapping(path = "reservas")
+@RequestMapping("/reservas")
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class ReservaController {
-
+    
     private final ReservaService reservaService;
 
-    public ReservaController(ReservaService reservaService) {
-        this.reservaService = reservaService;
-    }
-
-    @PostMapping
-    public ResponseEntity<ReservaNuevaDTO> saveReserva(@RequestBody ReservaNuevaDTO reservaDTO) throws BadRequestException {
-        if (reservaDTO.getClienteId() == null || reservaDTO.getAlojamientoId() == null || reservaDTO.getMascotaId() == null) {
-            throw new IllegalArgumentException("Faltan datos obligatorios en la reserva.");
-        }
-
-        Reserva reservaGuardada = reservaService.saveReserva(reservaDTO);
-        return ResponseEntity.ok(ReservaNuevaDTO.toReservaDTO(reservaGuardada));
-    }
-
     @GetMapping
-    public ResponseEntity<List<ReservaDTO>> getAllReservas() {
-        List<ReservaDTO> reservaDTOs = ReservaDTO.toReservaDTOList(reservaService.getAllReservas());
-        return ResponseEntity.ok(reservaDTOs);
+    public ResponseEntity<?> getAllReservas() {
+        try {
+            List<ReservaDTO> reservas = reservaService.getAllReservas();
+            return ResponseEntity.ok(reservas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las reservas: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/{id}/alojamiento")
-    public ResponseEntity<Alojamiento> getAlojamientoAsociado(@PathVariable Long id) throws ResourceNotFoundException {
-        Reserva reserva = reservaService.getReservaById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe una reserva con el id " + id));
-        return ResponseEntity.ok(reserva.getAlojamiento());
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<?> getReservasByEstado(@PathVariable EstadoReserva estado) {
+        try {
+            return ResponseEntity.ok(reservaService.getReservasByEstado(estado));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las reservas por estado: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/{id}/cliente")
-    public ResponseEntity<ClienteDTO> getClienteAsociado(@PathVariable Long id) throws ResourceNotFoundException {
-        Reserva reserva = reservaService.getReservaById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe una reserva con el id " + id));
-        return ResponseEntity.ok(ClienteDTO.toClienteDTO(reserva.getCliente()));
+    @GetMapping("/alojamiento/{alojamientoId}")
+    public ResponseEntity<?> getReservasByAlojamiento(@PathVariable Long alojamientoId) {
+        try {
+            return ResponseEntity.ok(reservaService.getReservasByAlojamiento(alojamientoId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las reservas por alojamiento: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/{id}/mascota")
-    public ResponseEntity<MascotaDTO> getMascotaAsociada(@PathVariable Long id) throws ResourceNotFoundException {
-        Reserva reserva = reservaService.getReservaById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe una reserva con el id " + id));
-        return ResponseEntity.ok(MascotaDTO.toMascotaDTO(reserva.getMascota()));
+    @GetMapping("/mascota/{mascotaId}")
+    public ResponseEntity<?> getReservasByMascota(@PathVariable Long mascotaId) {
+        try {
+            return ResponseEntity.ok(reservaService.getReservasByMascota(mascotaId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las reservas por mascota: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<?> getReservasByCliente(@PathVariable Long clienteId) {
+        try {
+            return ResponseEntity.ok(reservaService.getReservasByCliente(clienteId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las reservas por cliente: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaDTO> getReservaById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        Reserva reservaBuscada = reservaService.getReservaById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
-        return ResponseEntity.ok(ReservaDTO.toReservaDTO(reservaBuscada));
+    public ResponseEntity<?> getReservaById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(reservaService.getReservaById(id));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener la reserva: " + e.getMessage());
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> saveReserva(@RequestBody ReservaNuevaDTO reservaDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.saveReserva(reservaDTO));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar la reserva: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReservaDTO> updateReserva(@PathVariable Long id, @RequestBody Reserva reserva) throws BadRequestException, ResourceNotFoundException {
-        return ResponseEntity.ok(ReservaDTO.toReservaDTO(reservaService.updateReserva(id, reserva)));
+    public ResponseEntity<?> updateReserva(@PathVariable Long id, @RequestBody ReservaNuevaDTO reservaDTO) {
+        try {
+            return ResponseEntity.ok(reservaService.updateReserva(id, reservaDTO));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar la reserva: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservaById(@PathVariable("id") Long id) {
-        reservaService.deleteReservaById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteReserva(@PathVariable Long id) {
+        try {
+            reservaService.deleteReserva(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar la reserva: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/buscar-por-fechas")
-    public ResponseEntity<List<ReservaDTO>> buscarReservasPorFechas(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-
-        List<Reserva> reservas = reservaService.buscarReservasPorFechas(fechaInicio, fechaFin);
-        return ResponseEntity.ok(ReservaDTO.toReservaDTOList(reservas));
+    @PostMapping("/{reservaId}/cancelar")
+    public ResponseEntity<?> cancelarReserva(@PathVariable Long reservaId, @RequestParam Long clienteId) {
+        try {
+            return ResponseEntity.ok(reservaService.cancelarReserva(reservaId, clienteId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al cancelar la reserva: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/disponibles")
-    public ResponseEntity<List<Alojamiento>> buscarAlojamientosDisponibles(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-
-        List<Alojamiento> alojamientosDisponibles = reservaService.buscarAlojamientosDisponibles(fechaInicio, fechaFin);
-        return ResponseEntity.ok(alojamientosDisponibles);
+    @PostMapping("/{reservaId}/confirmar")
+    public ResponseEntity<?> confirmarReserva(@PathVariable Long reservaId) {
+        try {
+            return ResponseEntity.ok(reservaService.confirmarReserva(reservaId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al confirmar la reserva: " + e.getMessage());
+        }
     }
 
+    @PostMapping("/{reservaId}/completar")
+    public ResponseEntity<?> completarReserva(@PathVariable Long reservaId) {
+        try {
+            return ResponseEntity.ok(reservaService.completarReserva(reservaId));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al completar la reserva: " + e.getMessage());
+        }
+    }
 }

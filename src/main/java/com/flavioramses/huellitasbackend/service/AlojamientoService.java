@@ -42,7 +42,6 @@ public class AlojamientoService {
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setCategoria(categoria);
 
-        // Crear y asignar las imágenes
         List<ImagenAlojamiento> imagenes = alojamientoDTO.getImagenesUrl().stream()
                 .map(url -> ImagenAlojamiento.builder().urlImagen(url).alojamiento(alojamiento).build())
                 .collect(Collectors.toList());
@@ -76,11 +75,8 @@ public class AlojamientoService {
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setCategoria(categoria);
 
-        // Actualizar las imágenes
-        // Primero, eliminar las imágenes existentes
         imagenAlojamientoRepository.deleteAll(alojamiento.getImagenes());
 
-        // Luego, crear y asignar las nuevas imágenes
         List<ImagenAlojamiento> nuevasImagenes = alojamientoDTO.getImagenesUrl().stream()
                 .map(url -> ImagenAlojamiento.builder().urlImagen(url).alojamiento(alojamiento).build())
                 .collect(Collectors.toList());
@@ -105,18 +101,16 @@ public class AlojamientoService {
         if (alojamiento.getCategoria() != null) {
             dto.setCategoriaId(alojamiento.getCategoria().getId());
         } else {
-            dto.setCategoriaId(null); // O algún valor por defecto
+            dto.setCategoriaId(null);
         }
 
-        // Mapear las imágenes
         List<String> imagenesUrl = alojamiento.getImagenes().stream()
                 .map(ImagenAlojamiento::getUrlImagen)
                 .collect(Collectors.toList());
         dto.setImagenesUrl(imagenesUrl);
 
-        // Mapear las reservas
         List<ReservaDTO> reservasDTO = alojamiento.getReservas().stream()
-                .map(ReservaDTO::toReservaDTO) // Usa el método estático de ReservaDTO
+                .map(ReservaDTO::fromEntity)
                 .collect(Collectors.toList());
         dto.setReservas(reservasDTO);
 

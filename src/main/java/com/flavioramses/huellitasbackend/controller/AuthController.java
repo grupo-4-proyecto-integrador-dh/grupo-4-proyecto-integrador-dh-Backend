@@ -30,9 +30,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
+    @Autowired
     private final UsuarioService usuarioService;
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired

@@ -27,9 +27,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService implements UserDetailsService {
-
+    @Autowired
     private final UsuarioRepository usuarioRepository;
+    @Autowired
     private final ClienteRepository clienteRepository;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -52,9 +54,6 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> getUsersByRole(RolUsuario role) {
-        return usuarioRepository.findByRol(role);
-    }
 
     @Transactional
     public void deleteUsuarioById(Long id) {
@@ -97,7 +96,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setNombre(usuarioDTO.getNombre());
         usuario.setApellido(usuarioDTO.getApellido());
         usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setRol(RolUsuario.valueOf(String.valueOf(usuarioDTO.getRol()))); // Convierte el String del rol a RolUsuario
+        usuario.setRol(RolUsuario.valueOf(String.valueOf(usuarioDTO.getRol())));
 
         return usuarioRepository.save(usuario);
     }

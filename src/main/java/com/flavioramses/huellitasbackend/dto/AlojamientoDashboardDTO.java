@@ -14,7 +14,7 @@ public class AlojamientoDashboardDTO {
     private String descripcion;
     private Double precio;
     private String categoriaNombre;
-    private List<String> imagenesUrl; // Cambiado a una lista de URLs
+    private List<String> imagenesUrl;
 
     public static AlojamientoDashboardDTO toAlojamientoDashboardDTO(Alojamiento alojamiento) {
         AlojamientoDashboardDTO dto = new AlojamientoDashboardDTO();

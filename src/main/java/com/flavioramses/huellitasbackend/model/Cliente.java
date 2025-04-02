@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,10 +20,11 @@ public class Cliente {
     @OneToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
+    @JsonManagedReference
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
-    private List<Reserva> reservas;
+    private List<Reserva> reservas = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
-    private List<Mascota> mascotas;
+    private List<Mascota> mascotas = new ArrayList<>();
 }

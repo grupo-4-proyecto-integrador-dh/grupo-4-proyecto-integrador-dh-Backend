@@ -12,12 +12,22 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 @Component
 public class JwtTokenProvider {
 
-    private Key jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    // Clave secreta fija para evitar que los tokens se invaliden cuando se reinicia el servicio
+    private static final String SECRET_KEY = "huellitasSecretKeyParaElTokenJwtEsteEsUnaClaveLargaYSegura2024";
+    private Key jwtSecret;
     private long jwtExpirationInMs = 3600000; // 1 Hora
+
+    public JwtTokenProvider() {
+        // Convertir la cadena en una clave compatible con el algoritmo
+        byte[] keyBytes = Base64.getEncoder().encode(SECRET_KEY.getBytes());
+        this.jwtSecret = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
+    }
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
