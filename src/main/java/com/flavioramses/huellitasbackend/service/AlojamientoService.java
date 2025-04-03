@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,15 +74,28 @@ public class AlojamientoService {
         alojamiento.setPrecio(alojamientoDTO.getPrecio());
         alojamiento.setCategoria(categoria);
 
-        imagenAlojamientoRepository.deleteAll(alojamiento.getImagenes());
-
+        // Crear las nuevas imágenes
         List<ImagenAlojamiento> nuevasImagenes = alojamientoDTO.getImagenesUrl().stream()
                 .map(url -> ImagenAlojamiento.builder().urlImagen(url).alojamiento(alojamiento).build())
                 .collect(Collectors.toList());
+
+        // Mantener las nuevas imágenes en la colección
         alojamiento.setImagenes(nuevasImagenes);
+
+        // Eliminar las imágenes que ya no están en la lista nueva
+        Set<String> nuevasUrls = new HashSet<>(alojamientoDTO.getImagenesUrl());
+
+        // Eliminar las imágenes antiguas que ya no se encuentran en la nueva lista
+        alojamiento.getImagenes().stream()
+                .filter(imagen -> !nuevasUrls.contains(imagen.getUrlImagen()))
+                .forEach(imagen -> imagenAlojamientoRepository.delete(imagen));
 
         return alojamientoRepository.save(alojamiento);
     }
+
+
+
+
 
     public AlojamientoDTO getAlojamientoById(Long id) throws ResourceNotFoundException {
         Alojamiento alojamiento = alojamientoRepository.findById(id)

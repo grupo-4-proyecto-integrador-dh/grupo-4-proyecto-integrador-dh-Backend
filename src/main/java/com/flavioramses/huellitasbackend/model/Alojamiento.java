@@ -33,7 +33,7 @@ public class Alojamiento {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "alojamiento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "alojamiento", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ImagenAlojamiento> imagenes;
 
