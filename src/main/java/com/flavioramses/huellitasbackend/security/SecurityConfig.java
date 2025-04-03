@@ -38,6 +38,10 @@ public class SecurityConfig {
                         // Rutas públicas para búsqueda y consulta
                         .requestMatchers("/busqueda/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/alojamientos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/alojamientos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/alojamientos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/alojamientos/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
                         
                         // Rutas de favoritos
